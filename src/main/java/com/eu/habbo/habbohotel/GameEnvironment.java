@@ -16,6 +16,7 @@ import com.eu.habbo.habbohotel.modtool.ModToolSanctions;
 import com.eu.habbo.habbohotel.modtool.WordFilter;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
 import com.eu.habbo.habbohotel.permissions.PermissionsManager;
+import com.eu.habbo.habbohotel.permissions.UserPermissionsManager;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.polls.PollManager;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
@@ -49,6 +50,7 @@ public class GameEnvironment {
     private WordFilter wordFilter;
     private CraftingManager craftingManager;
     private PollManager pollManager;
+    private UserPermissionsManager userPermissionsManager;
 
     public void load() throws Exception {
         LOGGER.info("GameEnvironment -> Loading...");
@@ -73,6 +75,7 @@ public class GameEnvironment {
         this.wordFilter = new WordFilter();
         this.craftingManager = new CraftingManager();
         this.pollManager = new PollManager();
+        this.userPermissionsManager = new UserPermissionsManager();
 
         this.roomManager.loadPublicRooms();
         this.navigatorManager.loadNavigator();
@@ -140,6 +143,10 @@ public class GameEnvironment {
 
     public PermissionsManager getPermissionsManager() {
         return this.permissionsManager;
+    }
+
+    public UserPermissionsManager getUserPermissionsManager() {
+        return this.userPermissionsManager;
     }
 
     public BotManager getBotManager() {

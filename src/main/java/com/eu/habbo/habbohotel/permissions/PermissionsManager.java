@@ -113,12 +113,20 @@ public class PermissionsManager {
 
     public boolean hasPermission(Habbo habbo, String permission, boolean withRoomRights) {
         if (!this.hasPermission(habbo.getHabboInfo().getRank(), permission, withRoomRights)) {
-            for (HabboPlugin plugin : Emulator.getPluginManager().getPlugins()) {
-                if (plugin.hasPermission(habbo, permission)) {
-                    return true;
+            if(this.permissionIgnored(habbo, permission) || (!this.hasUserPermission(habbo, permission, withRoomRights) && !this.permissionIgnored(habbo, permission))){
+                for (HabboPlugin plugin : Emulator.getPluginManager().getPlugins()) {
+                    if (plugin.hasPermission(habbo, permission)) {
+                        return true;
+                    }
                 }
+
+                return false;
             }
 
+            return true;
+        }
+
+        if(!this.hasUserPermission(habbo, permission, withRoomRights) && !this.permissionIgnored(habbo, permission)){
             return false;
         }
 
@@ -128,6 +136,14 @@ public class PermissionsManager {
 
     public boolean hasPermission(Rank rank, String permission, boolean withRoomRights) {
         return rank.hasPermission(permission, withRoomRights);
+    }
+
+    public boolean hasUserPermission(Habbo habbo, String permission, boolean withRoomRights) {
+        return habbo.hasUserPermission(permission, withRoomRights);
+    }
+
+    public boolean permissionIgnored(Habbo habbo, String permission) {
+        return habbo.permissionIgnored(permission);
     }
 
     public Set<String> getStaffBadges() {

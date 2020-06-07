@@ -12,6 +12,7 @@ public class UpdatePermissionsCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         Emulator.getGameEnvironment().getPermissionsManager().reload();
+        Emulator.getGameEnvironment().getUserPermissionsManager().reload();
 
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_permissions"), RoomChatMessageBubbles.ALERT);
 
