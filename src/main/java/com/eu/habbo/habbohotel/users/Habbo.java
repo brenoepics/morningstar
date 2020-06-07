@@ -173,6 +173,7 @@ public class Habbo implements Runnable {
             return;
         } finally {
             Emulator.getGameEnvironment().getRoomManager().unloadRoomsForHabbo(this);
+            Emulator.getGameEnvironment().getUserPermissionsManager().unloadPermissionsForHabbo(this);
             Emulator.getGameEnvironment().getHabboManager().removeHabbo(this);
         }
         LOGGER.info("{} disconnected.", this.habboInfo.getUsername());
@@ -197,6 +198,13 @@ public class Habbo implements Runnable {
         return Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this, key, hasRoomRights);
     }
 
+    public boolean hasUserPermission(String key, boolean hasRoomRights) {
+        return Emulator.getGameEnvironment().getUserPermissionsManager().hasPermission(this, key, hasRoomRights);
+    }
+
+    public boolean permissionIgnored(String key) {
+        return Emulator.getGameEnvironment().getUserPermissionsManager().permissionIgnored(this, key);
+    }
 
     public void giveCredits(int credits) {
         if (credits == 0)

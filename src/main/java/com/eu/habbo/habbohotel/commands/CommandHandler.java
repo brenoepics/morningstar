@@ -5,6 +5,8 @@ import com.eu.habbo.core.CommandLog;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.permissions.PermissionSetting;
+import com.eu.habbo.habbohotel.permissions.UserPermission;
+import com.eu.habbo.habbohotel.permissions.UserPermissionSetting;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetCommand;
 import com.eu.habbo.habbohotel.pets.PetVocalsType;
@@ -299,6 +301,66 @@ public class CommandHandler {
                     continue;
 
                 if (permissions.contains(command.permission) && permissions.get(command.permission).setting != PermissionSetting.DISALLOWED) {
+                    allowedCommands.add(command);
+                }
+            }
+        }
+
+        allowedCommands.sort(CommandHandler.ALPHABETICAL_ORDER);
+
+        return allowedCommands;
+    }
+
+    public List<Command> getCommandsForUser(int userId) {
+        List<Command> allowedCommands = new ArrayList<>();
+        if (Emulator.getGameEnvironment().getUserPermissionsManager().userExists(userId)) {
+            THashMap<String, UserPermission> permissions = Emulator.getGameEnvironment().getUserPermissionsManager().getUserRank(userId).getPermissions();
+
+            for (Command command : commands.values()) {
+                if (allowedCommands.contains(command))
+                    continue;
+
+                if (permissions.contains(command.permission) && permissions.get(command.permission).setting != UserPermissionSetting.DISALLOWED && permissions.get(command.permission).setting != UserPermissionSetting.IGNORED) {
+                    allowedCommands.add(command);
+                }
+            }
+        }
+
+        allowedCommands.sort(CommandHandler.ALPHABETICAL_ORDER);
+
+        return allowedCommands;
+    }
+
+    public List<Command> getIgnoredCommandsForUser(int userId) {
+        List<Command> allowedCommands = new ArrayList<>();
+        if (Emulator.getGameEnvironment().getUserPermissionsManager().userExists(userId)) {
+            THashMap<String, UserPermission> permissions = Emulator.getGameEnvironment().getUserPermissionsManager().getUserRank(userId).getPermissions();
+
+            for (Command command : commands.values()) {
+                if (allowedCommands.contains(command))
+                    continue;
+
+                if (permissions.contains(command.permission) && permissions.get(command.permission).setting == UserPermissionSetting.IGNORED) {
+                    allowedCommands.add(command);
+                }
+            }
+        }
+
+        allowedCommands.sort(CommandHandler.ALPHABETICAL_ORDER);
+
+        return allowedCommands;
+    }
+
+    public List<Command> getDisallowedCommandsForUser(int userId) {
+        List<Command> allowedCommands = new ArrayList<>();
+        if (Emulator.getGameEnvironment().getUserPermissionsManager().userExists(userId)) {
+            THashMap<String, UserPermission> permissions = Emulator.getGameEnvironment().getUserPermissionsManager().getUserRank(userId).getPermissions();
+
+            for (Command command : commands.values()) {
+                if (allowedCommands.contains(command))
+                    continue;
+
+                if (permissions.contains(command.permission) && permissions.get(command.permission).setting == UserPermissionSetting.DISALLOWED) {
                     allowedCommands.add(command);
                 }
             }

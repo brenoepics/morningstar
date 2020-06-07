@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommandsCommand extends Command {
@@ -14,9 +15,20 @@ public class CommandsCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         StringBuilder message = new StringBuilder(Emulator.getTexts().getValue("commands.generic.cmd_commands.text"));
         List<Command> commands = Emulator.getGameEnvironment().getCommandHandler().getCommandsForRank(gameClient.getHabbo().getHabboInfo().getRank().getId());
-        message.append("(").append(commands.size()).append("):\r\n");
+        List<Command> userCommands = Emulator.getGameEnvironment().getCommandHandler().getCommandsForUser(gameClient.getHabbo().getHabboInfo().getId());
+        List<Command> disallowedUserCommands = Emulator.getGameEnvironment().getCommandHandler().getDisallowedCommandsForUser(gameClient.getHabbo().getHabboInfo().getId());
 
-        for (Command c : commands) {
+        List<Command> allCommands = new ArrayList<>();
+
+        for(Command iterateCommand : commands) {
+            if(userCommands.contains(iterateCommand) || (!userCommands.contains(iterateCommand) && !disallowedUserCommands.contains(iterateCommand))) {
+                allCommands.add(iterateCommand);
+            }
+        }
+
+        message.append("(").append(allCommands.size()).append("):\r\n");
+
+        for (Command c : allCommands) {
             message.append(Emulator.getTexts().getValue("commands.description." + c.permission, "commands.description." + c.permission)).append("\r");
         }
 
