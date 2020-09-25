@@ -4,12 +4,9 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.items.FloorItemUpdateComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import com.eu.habbo.util.pathfinding.Rotation;
@@ -19,8 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledFuture;
 
 public class InteractionVendingMachine extends HabboItem {
     public InteractionVendingMachine(ResultSet set, Item baseItem) throws SQLException {
@@ -116,6 +111,7 @@ public class InteractionVendingMachine extends HabboItem {
         for(RoomTile tile : activatorTiles) {
             if(unit.getCurrentLocation().is(tile.x, tile.y)) {
                 inActivatorSpace = true;
+                super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
             }
         }
 
@@ -132,7 +128,12 @@ public class InteractionVendingMachine extends HabboItem {
                 List<Runnable> onFail = new ArrayList<Runnable>();
 
                 onSuccess.add(() -> {
-                    tryInteract(client, room, unit);
+                    try {
+                        super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
+                        tryInteract(client, room, unit);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
 
                 unit.setGoalLocation(tileToWalkTo);
