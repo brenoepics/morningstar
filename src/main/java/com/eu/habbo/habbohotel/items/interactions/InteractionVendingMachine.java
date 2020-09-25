@@ -34,8 +34,12 @@ public class InteractionVendingMachine extends HabboItem {
     }
     
     public THashSet<RoomTile> getActivatorTiles(Room room) {
-        THashSet<RoomTile> tiles = new THashSet<RoomTile>();
-        tiles.add(getSquareInFront(room.getLayout(), this));
+        THashSet<RoomTile> tiles = new THashSet<>();
+        RoomTile tileInFront = getSquareInFront(room.getLayout(), this);
+
+        if (tileInFront != null)
+            tiles.add(tileInFront);
+
         tiles.add(room.getLayout().getTile(this.getX(), this.getY()));
         return tiles;
     }
@@ -71,7 +75,7 @@ public class InteractionVendingMachine extends HabboItem {
         this.setExtradata("1");
         room.updateItem(this);
 
-        if(!unit.isWalking()) {
+        if(!unit.isWalking() && !unit.hasStatus(RoomUnitStatus.SIT) && !unit.hasStatus(RoomUnitStatus.LAY)) {
             this.rotateToMachine(room, unit);
         }
 
