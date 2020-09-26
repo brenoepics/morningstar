@@ -23,31 +23,25 @@ public class FriendRequestEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         String username = this.packet.readString();
-        Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(username);
 
-        if (habbo.getHabboInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
+        if (username == null || username.isEmpty())
             return;
-        }
 
-        if (Emulator.getPluginManager().fireEvent(new UserRequestFriendshipEvent(this.client.getHabbo(), username, habbo)).isCancelled()) {
-            this.client.sendResponse(new FriendRequestErrorComposer(2));
-            return;
-        }
-
-        int id = 0;
-        boolean allowFriendRequests = true;
-
+        // If the Habbo you would like to be friends with already requested you to be friends, accept the request
         FriendRequest friendRequest = this.client.getHabbo().getMessenger().findFriendRequest(username);
         if (friendRequest != null) {
             this.client.getHabbo().getMessenger().acceptFriendRequest(friendRequest.getId(), this.client.getHabbo().getHabboInfo().getId());
             return;
         }
 
-        if (!Messenger.canFriendRequest(this.client.getHabbo(), username)) {
-            this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));
-            return;
-        }
+        // Habbo can be null if the Habbo is not online or when the Habbo doesn't exist
+        Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(username);
 
+        int id = 0;
+        boolean allowFriendRequests = true;
+
+        // If the Habbo is null, we check the database and set the ID and allowFriendRequests of the Habbo above.
+        // If the ID is still 0, the Habbo doesn't exist.
         if (habbo == null) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users_settings.block_friendrequests, users.id FROM users INNER JOIN users_settings ON users.id = users_settings.user_id WHERE username = ? LIMIT 1")) {
                 statement.setString(1, username);
@@ -64,21 +58,34 @@ public class FriendRequestEvent extends MessageHandler {
         } else {
             id = habbo.getHabboInfo().getId();
             allowFriendRequests = !habbo.getHabboStats().blockFriendRequests;
+
+            // Making friends with yourself would be very pathetic, we try to avoid that
+            if (id == this.client.getHabbo().getHabboInfo().getId())
+                return;
+
             if (allowFriendRequests)
                 habbo.getClient().sendResponse(new FriendRequestComposer(this.client.getHabbo()));
         }
 
+        // The Habbo exists
         if (id != 0) {
+            // Check if Habbo is accepting friend requests
             if (!allowFriendRequests) {
                 this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_ACCEPTING_REQUESTS));
                 return;
             }
 
+            // You can only have x friends
             if (this.client.getHabbo().getMessenger().getFriends().values().size() >= Messenger.friendLimit(this.client.getHabbo()) && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
                 this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.FRIEND_LIST_OWN_FULL));
                 return;
             }
+
             Messenger.makeFriendRequest(this.client.getHabbo().getHabboInfo().getId(), id);
+
+            if (Emulator.getPluginManager().fireEvent(new UserRequestFriendshipEvent(this.client.getHabbo(), username, habbo)).isCancelled()) {
+                this.client.sendResponse(new FriendRequestErrorComposer(2));
+            }
         } else {
             this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));
         }
