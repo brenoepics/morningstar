@@ -27,13 +27,6 @@ public class FriendRequestEvent extends MessageHandler {
         if (username == null || username.isEmpty())
             return;
 
-        // If the Habbo you would like to be friends with already requested you to be friends, accept the request
-//        FriendRequest friendRequest = this.client.getHabbo().getMessenger().findFriendRequest(username);
-//        if (friendRequest != null) {
-//            this.client.getHabbo().getMessenger().acceptFriendRequest(friendRequest.getId(), this.client.getHabbo().getHabboInfo().getId());
-//            return;
-//        }
-
         // Habbo can be null if the Habbo is not online or when the Habbo doesn't exist
         Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(username);
 
