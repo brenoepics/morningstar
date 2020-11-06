@@ -13,7 +13,9 @@ public class RequestRoomUserTagsEvent extends MessageHandler {
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(habboId);
+            if(habbo != null){
                 this.client.sendResponse(new RoomUserTagsComposer(habbo));
+            }
         }
 
     }
