@@ -110,3 +110,7 @@ ADD COLUMN `bubble_id`  int(3) NULL DEFAULT 31 AFTER `effect`;
 -- Permissions to see tent chat
 ALTER TABLE `permissions` ADD `acc_see_tentchat` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `acc_see_whispers`;
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.room.tent.prefix', 'Tent');
+
+-- Messenger Offline
+ALTER TABLE `messenger_offline` CHANGE COLUMN `user_id` `user_to_id` INT(11) NOT NULL DEFAULT '0' AFTER `id`;
+ALTER TABLE `messenger_offline` CHANGE COLUMN `sended_on` `timestamp` INT(11) NOT NULL AFTER `message`;
