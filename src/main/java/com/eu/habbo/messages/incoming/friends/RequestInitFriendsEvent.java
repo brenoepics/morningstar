@@ -14,5 +14,7 @@ public class RequestInitFriendsEvent extends MessageHandler {
         messages.add(new MessengerInitComposer(this.client.getHabbo()).compose());
         messages.addAll(FriendsComposer.getMessagesForBuddyList(this.client.getHabbo().getMessenger().getFriends().values()));
         this.client.sendResponses(messages);
+
+        this.client.getHabbo().getMessenger().processOfflineMessages(this.client.getHabbo().getHabboInfo().getId());
     }
 }
