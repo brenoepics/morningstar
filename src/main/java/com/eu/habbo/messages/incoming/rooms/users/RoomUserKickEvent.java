@@ -45,7 +45,6 @@ public class RoomUserKickEvent extends MessageHandler {
         }
 
         if (room.getKickOption() == 0 && !(room.isOwner(this.client.getHabbo()) || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission(Permission.ACC_AMBASSADOR))) {
-            this.client.getHabbo().whisper("1 cod");
             return;
         }
 
