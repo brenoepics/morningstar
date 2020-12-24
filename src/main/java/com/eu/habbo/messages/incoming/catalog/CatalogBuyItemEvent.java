@@ -39,6 +39,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
         // Apply cooldown for purchases.
         if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastPurchaseTimestamp < CatalogManager.PURCHASE_COOLDOWN) {
             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+            return;
         }
         this.client.getHabbo().getHabboStats().lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
 
