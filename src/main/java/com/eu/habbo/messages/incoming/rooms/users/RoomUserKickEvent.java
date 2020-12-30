@@ -32,7 +32,7 @@ public class RoomUserKickEvent extends MessageHandler {
             2 - All
          */
 
-        if (room.hasRights(target) && target.getHabboInfo().getId() == this.client.getHabbo().getHabboInfo().getId())
+        if (room.hasRights(target) && target == this.client.getHabbo())
             return;
 
         if (target.hasPermission(Permission.ACC_UNKICKABLE)) {
