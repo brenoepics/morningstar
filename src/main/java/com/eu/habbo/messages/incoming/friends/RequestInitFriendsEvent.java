@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.incoming.friends;
 
+import com.eu.habbo.habbohotel.messenger.OfflineMessengerOffline;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.friends.FriendsComposer;
@@ -15,6 +16,6 @@ public class RequestInitFriendsEvent extends MessageHandler {
         messages.addAll(FriendsComposer.getMessagesForBuddyList(this.client.getHabbo().getMessenger().getFriends().values()));
         this.client.sendResponses(messages);
 
-        this.client.getHabbo().getMessenger().processOfflineMessages(this.client.getHabbo().getHabboInfo().getId());
+        OfflineMessengerOffline.readOfflineMessages(this.client.getHabbo());
     }
 }

@@ -7,6 +7,7 @@ import com.eu.habbo.core.*;
 import com.eu.habbo.core.consolecommands.ConsoleCommand;
 import com.eu.habbo.database.Database;
 import com.eu.habbo.habbohotel.GameEnvironment;
+import com.eu.habbo.habbohotel.messenger.OfflineMessengerOffline;
 import com.eu.habbo.networking.camera.CameraClient;
 import com.eu.habbo.networking.gameserver.GameServer;
 import com.eu.habbo.networking.rconserver.RCONServer;
@@ -152,6 +153,7 @@ public final class Emulator {
             Emulator.rconServer.initializePipeline();
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
+            OfflineMessengerOffline.init();
 
             LOGGER.info("Arcturus Morningstar has successfully loaded.");
             LOGGER.info("System launched in: {}ms. Using {} threads!", (System.nanoTime() - startTime) / 1e6, Runtime.getRuntime().availableProcessors() * 2);
@@ -279,6 +281,11 @@ public final class Emulator {
         try {
             if (Emulator.gameServer != null)
                 Emulator.gameServer.stop();
+        } catch (Exception e) {
+        }
+
+        try {
+            OfflineMessengerOffline.saveToDatabase();
         } catch (Exception e) {
         }
 

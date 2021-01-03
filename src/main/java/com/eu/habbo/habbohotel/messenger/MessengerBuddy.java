@@ -159,12 +159,13 @@ public class MessengerBuddy implements Runnable, ISerialize {
     public void onMessageReceived(Habbo from, String message) {
         Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(this.id);
 
+        Message chatMessage = new Message(from.getHabboInfo().getId(), this.id, message);
+
         if (habbo == null) {
-            saveOfflineMessage(from.getHabboInfo().getId(), message);
+            OfflineMessengerOffline.addOfflineMessage(chatMessage);
             return;
         }
 
-        Message chatMessage = new Message(from.getHabboInfo().getId(), this.id, message);
         Emulator.getThreading().run(chatMessage);
 
         if (WordFilter.ENABLED_FRIENDCHAT) {
@@ -172,18 +173,6 @@ public class MessengerBuddy implements Runnable, ISerialize {
         }
 
         habbo.getClient().sendResponse(new FriendChatMessageComposer(chatMessage));
-    }
-
-    private void saveOfflineMessage(int userFromId, String message) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO messenger_offline (user_to_id, user_from_id, message, sended_on) VALUES (?, ?, ?, ?)")) {
-            statement.setInt(1, this.id);
-            statement.setInt(2, userFromId);
-            statement.setString(3, message);
-            statement.setInt(4, Emulator.getIntUnixTimestamp());
-            statement.execute();
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
     }
 
     @Override
