@@ -163,7 +163,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
                 items.add(item);
         }
 
-        for (HabboItem item : items) {
+        for (HabboItem item : itemsToRemove) {
             this.items.remove(item);
         }
 
