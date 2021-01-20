@@ -17,7 +17,7 @@ import java.util.List;
 public class InteractionWater extends InteractionDefault {
 
     private static final String DEEP_WATER_NAME = "bw_water_2";
-    private static final String CACHE_OLD_EFFECT_KEY = "OLD_EFFECT_BEFORE_WATER";
+    private static final String CACHE_OLD_EFFECT_KEY = "OLD_EFFECT_BEFORE_WALKON";
 
     private final boolean isDeepWater;
     private boolean isInRoom;
