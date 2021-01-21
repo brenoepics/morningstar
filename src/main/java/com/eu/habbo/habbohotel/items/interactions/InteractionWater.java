@@ -17,7 +17,6 @@ import java.util.List;
 public class InteractionWater extends InteractionDefault {
 
     private static final String DEEP_WATER_NAME = "bw_water_2";
-    private static final String CACHE_OLD_EFFECT_KEY = "OLD_EFFECT_BEFORE_WALKON";
 
     private final boolean isDeepWater;
     private boolean isInRoom;
@@ -73,9 +72,7 @@ public class InteractionWater extends InteractionDefault {
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
-        Habbo user = room.getHabbo(roomUnit);
-        int oldEffect = user.getClient().getHabbo().getRoomUnit().getEffectId();
-        user.getHabboStats().cache.put(CACHE_OLD_EFFECT_KEY, oldEffect);
+        room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().setOldEffectId(room.getHabbo(roomUnit).getClient().getHabbo().getRoomUnit().getEffectId());
 
         super.onWalkOn(roomUnit, room, objects);
 
@@ -93,9 +90,7 @@ public class InteractionWater extends InteractionDefault {
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Habbo user = room.getHabbo(roomUnit);
-        room.giveEffect(roomUnit, (Integer) user.getHabboStats().cache.get(CACHE_OLD_EFFECT_KEY), -1);
-        user.getHabboStats().cache.remove(CACHE_OLD_EFFECT_KEY);
+        room.giveEffect(roomUnit, room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId(), -1);
 
         Pet pet = room.getPet(roomUnit);
 
