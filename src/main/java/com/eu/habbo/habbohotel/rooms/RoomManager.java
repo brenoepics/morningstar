@@ -66,7 +66,7 @@ public class RoomManager {
     private static final int page = 0;
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_ROOMS_USER = 25;
-    public static int MAXIMUM_ROOMS_VIP = 35;
+    public static int MAXIMUM_ROOMS_HC = 35;
     public static int HOME_ROOM_ID = 0;
     public static boolean SHOW_PUBLIC_IN_POPULAR_TAB = false;
     private final THashMap<Integer, RoomCategory> roomCategories;
@@ -377,7 +377,7 @@ public class RoomManager {
     public void unloadRoomsForHabbo(Habbo habbo) {
         List<Room> roomsToDispose = new ArrayList<>();
         for (Room room : this.activeRooms.values()) {
-            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && room.getOwnerId() == habbo.getHabboInfo().getId() && room.getUserCount() == 0 && !this.roomCategories.get(room.getCategory()).isPublic()) {
+            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && room.getOwnerId() == habbo.getHabboInfo().getId() && room.getUserCount() == 0 && (this.roomCategories.get(room.getCategory()) == null || !this.roomCategories.get(room.getCategory()).isPublic())) {
                 roomsToDispose.add(room);
             }
         }
@@ -531,14 +531,14 @@ public class RoomManager {
                 habbo.hasPermission(Permission.ACC_ENTERANYROOM) ||
                 room.hasRights(habbo) ||
                 (room.getState().equals(RoomState.INVISIBLE) && room.hasRights(habbo)) ||
-                (room.hasGuild() && room.guildRightLevel(habbo) > 2)) {
+                (room.hasGuild() && room.getGuildRightLevel(habbo).isGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
             this.openRoom(habbo, room, doorLocation);
         } else if (room.getState() == RoomState.LOCKED) {
             boolean rightsFound = false;
 
             synchronized (room.roomUnitLock) {
                 for (Habbo current : room.getHabbos()) {
-                    if (room.hasRights(current) || current.getHabboInfo().getId() == room.getOwnerId() || (room.hasGuild() && room.guildRightLevel(current) >= 2)) {
+                    if (room.hasRights(current) || current.getHabboInfo().getId() == room.getOwnerId() || (room.hasGuild() && room.getGuildRightLevel(current).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
                         current.getClient().sendResponse(new DoorbellAddUserComposer(habbo.getHabboInfo().getUsername()));
                         rightsFound = true;
                     }
@@ -672,7 +672,7 @@ public class RoomManager {
             habbo.getClient().sendResponse(new RoomPromotionMessageComposer(null, null));
         }
 
-        if (room.getOwnerId() != habbo.getHabboInfo().getId()) {
+        if (room.getOwnerId() != habbo.getHabboInfo().getId() && !habbo.getHabboStats().visitedRoom(room.getId())) {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomEntry"));
         }
     }
@@ -875,7 +875,7 @@ public class RoomManager {
 
         habbo.getClient().sendResponse(new RoomUsersGuildBadgesComposer(guildBadges));
 
-        if (room.hasRights(habbo) || (room.hasGuild() && room.guildRightLevel(habbo) >= 2)) {
+        if (room.hasRights(habbo) || (room.hasGuild() && room.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
             if (!room.getHabboQueue().isEmpty()) {
                 for (Habbo waiting : room.getHabboQueue().valueCollection()) {
                     habbo.getClient().sendResponse(new DoorbellAddUserComposer(waiting.getHabboInfo().getUsername()));
@@ -916,6 +916,9 @@ public class RoomManager {
             statement.setInt(2, habbo.getHabboInfo().getId());
             statement.setInt(3, (int) (habbo.getHabboStats().roomEnterTimestamp));
             statement.execute();
+
+            if (!habbo.getHabboStats().visitedRoom(room.getId()))
+                habbo.getHabboStats().addVisitRoom(room.getId());
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
         }
