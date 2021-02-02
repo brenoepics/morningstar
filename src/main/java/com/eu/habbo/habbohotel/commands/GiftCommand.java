@@ -25,7 +25,7 @@ public class GiftCommand extends Command {
             int itemId;
 
             try {
-                itemId = Integer.valueOf(params[2]);
+                itemId = Integer.parseInt(params[2]);
             } catch (Exception e) {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_gift.not_a_number"), RoomChatMessageBubbles.ALERT);
                 return true;
@@ -52,20 +52,16 @@ public class GiftCommand extends Command {
 
             StringBuilder message = new StringBuilder();
 
-            if (params.length > 3) {
-                for (int i = 3; i < params.length; i++) {
+            if (params.length > 3)
+                for (int i = 3; i < params.length; i++)
                     message.append(params[i]).append(" ");
-                }
-            }
-
-            final String finalMessage = message.toString();
 
             HabboItem item = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, 0, 0, "");
 
             Item giftItem = Emulator.getGameEnvironment().getItemManager().getItem((Integer) Emulator.getGameEnvironment().getCatalogManager().giftFurnis.values().toArray()[Emulator.getRandom().nextInt(Emulator.getGameEnvironment().getCatalogManager().giftFurnis.size())]);
 
             String extraData = "1\t" + item.getId();
-            extraData += "\t0\t0\t0\t" + finalMessage + "\t0\t0";
+            extraData += "\t0\t0\t0\t" + message.toString() + "\t" + gameClient.getHabbo().getHabboInfo().getUsername() + "\t" + gameClient.getHabbo().getHabboInfo().getLook() + "";
 
             Emulator.getGameEnvironment().getItemManager().createGift(username, giftItem, extraData, 0, 0);
 
