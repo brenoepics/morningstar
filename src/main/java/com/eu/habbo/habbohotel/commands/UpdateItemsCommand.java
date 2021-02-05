@@ -16,6 +16,7 @@ public class UpdateItemsCommand extends Command {
         Emulator.getGameEnvironment().getItemManager().loadItems();
         Emulator.getGameEnvironment().getItemManager().loadCrackable();
         Emulator.getGameEnvironment().getItemManager().loadSoundTracks();
+        Emulator.getGameEnvironment().getItemManager().loadUnallowedOldEffects();
 
         synchronized (Emulator.getGameEnvironment().getRoomManager().getActiveRooms()) {
             for (Room room : Emulator.getGameEnvironment().getRoomManager().getActiveRooms()) {

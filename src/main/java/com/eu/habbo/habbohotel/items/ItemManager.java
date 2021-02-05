@@ -81,6 +81,7 @@ public class ItemManager {
     private final YoutubeManager youtubeManager;
     private final WiredHighscoreManager highscoreManager;
     private final TreeMap<Integer, NewUserGift> newuserGifts;
+    private final ArrayList furniEffects;
 
     public ItemManager() {
         this.items = TCollections.synchronizedMap(new TIntObjectHashMap<>());
@@ -90,6 +91,7 @@ public class ItemManager {
         this.youtubeManager = new YoutubeManager();
         this.highscoreManager = new WiredHighscoreManager();
         this.newuserGifts = new TreeMap<>();
+        this.furniEffects = new ArrayList();
     }
 
     public void load() {
@@ -104,6 +106,7 @@ public class ItemManager {
         this.youtubeManager.load();
         this.highscoreManager.load();
         this.loadNewUserGifts();
+        this.loadUnallowedOldEffects();
 
         LOGGER.info("Item Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
@@ -351,6 +354,28 @@ public class ItemManager {
         }
 
         this.interactionsList.add(itemInteraction);
+    }
+
+    public void loadUnallowedOldEffects() {
+            this.furniEffects.clear();
+
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet query = statement.executeQuery("SELECT DISTINCT effect_id_female, effect_id_male FROM items_base WHERE effect_id_female OR effect_id_male > 0")) {
+
+                while (query.next()) {
+                    this.furniEffects.add(query.getInt(1));
+                    this.furniEffects.add(query.getInt(2));
+                }
+                Set<Integer> set = new HashSet<>(this.furniEffects);
+                this.furniEffects.clear();
+                this.furniEffects.addAll(set);
+
+            } catch (SQLException e) {
+                LOGGER.error("Caught SQL exception", e);
+            }
+    }
+
+    public boolean isFurniEffect(int effectId) {
+        return this.furniEffects.contains(effectId);
     }
 
 

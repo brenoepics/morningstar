@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.Pet;
@@ -90,7 +91,11 @@ public class InteractionWater extends InteractionDefault {
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        room.giveEffect(roomUnit, room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId(), -1);
+        if (Emulator.getGameEnvironment().getItemManager().isFurniEffect(room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId())) {
+            room.giveEffect(roomUnit, 0, -1);
+        } else {
+            room.giveEffect(roomUnit, room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId(), -1);
+        }
 
         Pet pet = room.getPet(roomUnit);
 
