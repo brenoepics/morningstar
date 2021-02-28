@@ -52,16 +52,16 @@ import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -272,6 +272,11 @@ public class PluginManager {
                         plugin.configuration = pluginConfigurtion;
                         plugin.classLoader = urlClassLoader;
                         plugin.stream = stream;
+                        plugin.listeners = new ArrayList<>();
+                        for(int i = 0; i < EventPriority.values().length; i++) {
+                            HashMap<Class<? extends Event>, Set<EventManager.RegisteredListener>> hm = new HashMap<>();
+                            plugin.listeners.add(hm);
+                        }
                         this.plugins.add(plugin);
                         plugin.onEnable();
                     } catch (Exception e) {
@@ -285,89 +290,30 @@ public class PluginManager {
         }
     }
 
+    /**
+     * @deprecated The new way: Emulator.getEventManager().registerListener();
+     */
+    @Deprecated
     public void registerEvents(HabboPlugin plugin, EventListener listener) {
-        synchronized (plugin.registeredEvents) {
-            Method[] methods = listener.getClass().getMethods();
-
-            for (Method method : methods) {
-                if (method.getAnnotation(EventHandler.class) != null) {
-                    if (method.getParameterTypes().length == 1) {
-                        if (Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
-                            final Class<?> eventClass = method.getParameterTypes()[0];
-
-                            if (!plugin.registeredEvents.containsKey(eventClass.asSubclass(Event.class))) {
-                                plugin.registeredEvents.put(eventClass.asSubclass(Event.class), new THashSet<>());
-                            }
-
-                            plugin.registeredEvents.get(eventClass.asSubclass(Event.class)).add(method);
-                        }
-                    }
-                }
-            }
-        }
+        Emulator.getEventManager().registerListener(plugin, listener);
     }
 
-    public <T extends Event> T fireEvent(T event) {
-        for (Method method : this.methods) {
-            if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isAssignableFrom(event.getClass())) {
-                try {
-                    method.invoke(null, event);
-                } catch (Exception e) {
-                    LOGGER.error("Could not pass default event {} to {}: {}!", event.getClass().getName(), method.getClass().getName(), method.getName());
-                    LOGGER.error("Caught exception", e);
-                }
-            }
-        }
-
-        TObjectHashIterator<HabboPlugin> iterator = this.plugins.iterator();
-        while (iterator.hasNext()) {
-            try {
-                HabboPlugin plugin = iterator.next();
-
-                if (plugin != null) {
-                    THashSet<Method> methods = plugin.registeredEvents.get(event.getClass().asSubclass(Event.class));
-
-                    if (methods != null) {
-                        for (Method method : methods) {
-                            try {
-                                method.invoke(plugin, event);
-                            } catch (Exception e) {
-                                LOGGER.error("Could not pass event {} to {}", event.getClass().getName(), plugin.configuration.name);
-                                LOGGER.error("Caught exception", e);
-                            }
-                        }
-                    }
-                }
-            } catch (NoSuchElementException e) {
-                break;
-            }
-        }
-
-        return event;
+    /**
+     * @deprecated The new way: Emulator.getEventManager().callEvent();
+     */
+    @Deprecated
+    public <T extends Event> T fireEvent(T e) {
+        return Emulator.getEventManager().callEvent(e);
     }
 
+    /**
+     * @deprecated The new way: Emulator.getEventManager().isRegistered();
+     */
+    @Deprecated
     public boolean isRegistered(Class<? extends Event> clazz, boolean pluginsOnly) {
-        TObjectHashIterator<HabboPlugin> iterator = this.plugins.iterator();
-        while (iterator.hasNext()) {
-            try {
-                HabboPlugin plugin = iterator.next();
-                if (plugin.isRegistered(clazz))
-                    return true;
-            } catch (NoSuchElementException e) {
-                break;
-            }
-        }
-
-        if (!pluginsOnly) {
-            for (Method method : this.methods) {
-                if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isAssignableFrom(clazz)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+       return Emulator.getEventManager().isRegistered(clazz, pluginsOnly);
     }
+
 
     public void dispose() {
         this.disposePlugins();

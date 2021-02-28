@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.GameEnvironment;
 import com.eu.habbo.networking.camera.CameraClient;
 import com.eu.habbo.networking.gameserver.GameServer;
 import com.eu.habbo.networking.rconserver.RCONServer;
+import com.eu.habbo.plugin.EventManager;
 import com.eu.habbo.plugin.PluginManager;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
@@ -70,6 +71,7 @@ public final class Emulator {
     private static ThreadPooling threading;
     private static GameEnvironment gameEnvironment;
     private static PluginManager pluginManager;
+    private static EventManager eventManager;
     private static BadgeImager badgeImager;
 
     static {
@@ -89,7 +91,7 @@ public final class Emulator {
         scanner.nextLine();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         try {
             // Check if running on Windows and not in IntelliJ.
             // If so, we need to reconfigure the console appender and enable Jansi for colors.
@@ -138,6 +140,7 @@ public final class Emulator {
             Emulator.threading = new ThreadPooling(Emulator.getConfig().getInt("runtime.threads"));
             Emulator.getDatabase().getDataSource().setMaximumPoolSize(Emulator.getConfig().getInt("runtime.threads") * 2);
             Emulator.getDatabase().getDataSource().setMinimumIdle(10);
+            Emulator.eventManager = new EventManager();
             Emulator.pluginManager = new PluginManager();
             Emulator.pluginManager.reload();
             Emulator.getPluginManager().fireEvent(new EmulatorConfigUpdatedEvent());
@@ -212,12 +215,11 @@ public final class Emulator {
             MessageDigest md = MessageDigest.getInstance("MD5");// MD5
             FileInputStream fis = new FileInputStream(filepath);
             byte[] dataBytes = new byte[1024];
-            int nread = 0;
+            int nread;
             while ((nread = fis.read(dataBytes)) != -1)
                 md.update(dataBytes, 0, nread);
             byte[] mdbytes = md.digest();
-            for (int i = 0; i < mdbytes.length; i++)
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (byte mdbyte : mdbytes) sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
         } catch (Exception e) {
             build = "UNKNOWN";
             return;
@@ -258,8 +260,8 @@ public final class Emulator {
         }
 
         try {
-            if (Emulator.getPluginManager() != null)
-                Emulator.getPluginManager().fireEvent(new EmulatorStoppedEvent());
+            if (Emulator.getEventManager() != null)
+                Emulator.getEventManager().callEvent(new EmulatorStoppedEvent());
         } catch (Exception e) {
         }
 
@@ -333,7 +335,8 @@ public final class Emulator {
     }
 
     /**
-     * @deprecated Do not use. Please use LoggerFactory.getLogger(YourClass.class) to log.
+     * Do not use. Please use LoggerFactory.getLogger(YourClass.class) to log.
+     * @deprecated
      */
     @Deprecated
     public static Logging getLogging() {
@@ -350,6 +353,10 @@ public final class Emulator {
 
     public static PluginManager getPluginManager() {
         return pluginManager;
+    }
+
+    public static EventManager getEventManager() {
+        return eventManager;
     }
 
     public static Random getRandom() {
