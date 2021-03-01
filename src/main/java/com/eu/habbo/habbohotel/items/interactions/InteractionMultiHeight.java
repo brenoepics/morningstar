@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
@@ -110,6 +111,8 @@ public class InteractionMultiHeight extends HabboItem {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().setOldEffectId(room.getHabbo(roomUnit).getClient().getHabbo().getRoomUnit().getEffectId());
+
         super.onWalkOn(roomUnit, room, objects);
 
         if (roomUnit != null) {
@@ -142,13 +145,10 @@ public class InteractionMultiHeight extends HabboItem {
                     Habbo habbo = room.getHabbo(roomUnit);
 
                     if (habbo != null) {
-                        if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0) {
-                            room.giveEffect(habbo, 0, -1);
-                            return;
-                        }
-
-                        if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0) {
-                            room.giveEffect(habbo, 0, -1);
+                        if (Emulator.getGameEnvironment().getItemManager().isFurniEffect(room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId())) {
+                            room.giveEffect(roomUnit, 0, -1);
+                        } else {
+                            room.giveEffect(roomUnit, room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId(), -1);
                         }
                     }
                 }

@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.games.freeze;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.games.GameTeam;
@@ -19,7 +20,12 @@ public class FreezeGameTeam extends GameTeam {
         Game game = gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().getGame(FreezeGame.class);
         Room room = gamePlayer.getHabbo().getRoomUnit().getRoom();
 
-        gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(gamePlayer.getHabbo(), 0, -1);
+        if (Emulator.getGameEnvironment().getItemManager().isFurniEffect(gamePlayer.getHabbo().getHabboStats().getOldEffectId())) {
+            room.giveEffect(gamePlayer.getHabbo(), 0, -1);
+        } else {
+            room.giveEffect(gamePlayer.getHabbo(), gamePlayer.getHabbo().getHabboStats().getOldEffectId(), -1);
+        }
+
         gamePlayer.getHabbo().getRoomUnit().setCanWalk(true);
 
         super.removeMember(gamePlayer);
@@ -33,6 +39,8 @@ public class FreezeGameTeam extends GameTeam {
 
     @Override
     public void addMember(GamePlayer gamePlayer) {
+        gamePlayer.getHabbo().getHabboStats().setOldEffectId(gamePlayer.getHabbo().getRoomUnit().getEffectId());
+
         super.addMember(gamePlayer);
 
         gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(gamePlayer.getHabbo(), FreezeGame.effectId + this.teamColor.type, -1);
