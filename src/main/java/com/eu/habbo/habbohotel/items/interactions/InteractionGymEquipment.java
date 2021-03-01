@@ -35,6 +35,8 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().setOldEffectId(room.getHabbo(roomUnit).getClient().getHabbo().getRoomUnit().getEffectId());
+
         super.onWalkOn(roomUnit, room, objects);
 
         if (this.forceRotation()) {
@@ -55,7 +57,13 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
-        room.giveEffect(roomUnit, 0, -1);
+
+        if (Emulator.getGameEnvironment().getItemManager().isFurniEffect(room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId())) {
+            room.giveEffect(roomUnit, 0, -1);
+        } else {
+            room.giveEffect(roomUnit, room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId(), -1);
+        }
+
 
         if (this.forceRotation()) {
             roomUnit.canRotate = true;

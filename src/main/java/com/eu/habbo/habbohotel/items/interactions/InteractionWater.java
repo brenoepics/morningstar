@@ -72,7 +72,6 @@ public class InteractionWater extends InteractionDefault {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
         room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().setOldEffectId(room.getHabbo(roomUnit).getClient().getHabbo().getRoomUnit().getEffectId());
 
         super.onWalkOn(roomUnit, room, objects);
