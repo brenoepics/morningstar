@@ -9,7 +9,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 public abstract class HabboPlugin {
-    protected List<HashMap<Class<? extends Event>, Set<EventManager.RegisteredListener>>> listeners = new ArrayList<>();
+    protected HashMap<Class<? extends Event>, Set<EventManager.RegisteredListener>> listeners = new HashMap<>();
 
     public HabboPluginConfiguration configuration;
     public URLClassLoader classLoader;
@@ -20,12 +20,7 @@ public abstract class HabboPlugin {
     public abstract void onDisable() throws Exception;
 
     public boolean isRegistered(Class<? extends Event> clazz) {
-        for (HashMap<Class<? extends Event>, Set<EventManager.RegisteredListener>> a : listeners){
-            if (a.containsKey(clazz)){
-                return true;
-            }
-        }
-        return false;
+        return listeners.containsKey(clazz);
     }
 
     public abstract boolean hasPermission(Habbo habbo, String key);

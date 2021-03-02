@@ -115,7 +115,7 @@ public final class Emulator {
             // Checks if this is a BETA build before allowing them to continue.
             if (PREVIEW.toLowerCase().contains("beta")) {
                 System.out.println("Warning, this is a beta build, this means that there may be unintended consequences so make sure you take regular backups while using this build. If you notice any issues you should make an issue on the Krews Git.");
-                promptEnterKey();
+//                promptEnterKey();
             }
 
             LOGGER.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");

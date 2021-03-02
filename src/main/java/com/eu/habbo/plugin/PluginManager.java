@@ -272,11 +272,6 @@ public class PluginManager {
                         plugin.configuration = pluginConfigurtion;
                         plugin.classLoader = urlClassLoader;
                         plugin.stream = stream;
-                        plugin.listeners = new ArrayList<>();
-                        for(int i = 0; i < EventPriority.values().length; i++) {
-                            HashMap<Class<? extends Event>, Set<EventManager.RegisteredListener>> hm = new HashMap<>();
-                            plugin.listeners.add(hm);
-                        }
                         this.plugins.add(plugin);
                         plugin.onEnable();
                     } catch (Exception e) {

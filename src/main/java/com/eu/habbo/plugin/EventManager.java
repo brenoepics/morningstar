@@ -96,8 +96,6 @@ public class EventManager {
 
     }
 
-
-
     List<BiConsumer<Event, Exception>> exceptionHandlers;
     HashMap<Class<? extends Event>, Long> criticalTime;
     ExecutorService service;
@@ -144,10 +142,9 @@ public class EventManager {
             if(m.getParameterCount() != 1) continue;
             if(!Event.class.isAssignableFrom(m.getParameterTypes()[0])) continue;
 
-            EventPriority priority = m.getAnnotation(EventHandler.class).priority();
             Class<? extends Event> eventClazz = (Class<? extends Event>) m.getParameterTypes()[0];
             MethodBasedListener registeredListener = new MethodBasedListener(listener, m);
-            HashMap<Class<? extends Event>, Set<RegisteredListener>> rmap = habboPlugin.listeners.get(priority.ordinal());
+            HashMap<Class<? extends Event>, Set<RegisteredListener>> rmap = habboPlugin.listeners;
             if(!rmap.containsKey(eventClazz)) {
                 rmap.put(eventClazz, new HashSet<>());
             }
@@ -155,9 +152,9 @@ public class EventManager {
         }
     }
 
-    public <T extends Event> RegisteredListener register(HabboPlugin habboPlugin, Class<T> clazz, EventPriority priority, Consumer<T> cons) {
+    public <T extends Event> RegisteredListener register(HabboPlugin habboPlugin, Class<T> clazz, Consumer<T> cons) {
         OneLineListener<T> l = new OneLineListener<>(cons);
-        HashMap<Class<? extends Event>, Set<RegisteredListener>> rmap = habboPlugin.listeners.get(priority.ordinal());
+        HashMap<Class<? extends Event>, Set<RegisteredListener>> rmap = habboPlugin.listeners;
         if(!rmap.containsKey(clazz)) {
             rmap.put(clazz, new HashSet<>());
         }
@@ -165,9 +162,9 @@ public class EventManager {
         return l;
     }
 
-    public <T extends Event> RegisteredListener register(HabboPlugin habboPlugin, Class<T> clazz, EventPriority priority, boolean async, Consumer<T> cons) {
+    public <T extends Event> RegisteredListener register(HabboPlugin habboPlugin, Class<T> clazz, boolean async, Consumer<T> cons) {
         OneLineListener<T> l = new OneLineListener<>(cons, async);
-        HashMap<Class<? extends Event>, Set<RegisteredListener>> rmap = habboPlugin.listeners.get(priority.ordinal());
+        HashMap<Class<? extends Event>, Set<RegisteredListener>> rmap = habboPlugin.listeners;
         if(!rmap.containsKey(clazz)) {
             rmap.put(clazz, new HashSet<>());
         }
@@ -176,40 +173,36 @@ public class EventManager {
     }
 
     public void unregisterListener(EventListener listener) {
-        for(HabboPlugin habboPlugin : Emulator.getPluginManager().getPlugins()){
-            for(HashMap<Class<? extends Event>, Set<RegisteredListener>> hm : habboPlugin.listeners) {
-                for(Map.Entry<Class<? extends Event>, Set<RegisteredListener>> en : hm.entrySet()) {
-                    Set<RegisteredListener> rl = null;
-                    for(RegisteredListener l : en.getValue()) {
-                        if(l instanceof MethodBasedListener) {
-                            if(((MethodBasedListener)l).o == listener) {
-                                if(rl == null) rl = new HashSet<>();
-                                rl.add(l);
-                            }
+        for (HabboPlugin habboPlugin : Emulator.getPluginManager().getPlugins()) {
+            for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> en : habboPlugin.listeners.entrySet()) {
+                Set<RegisteredListener> rl = null;
+                for (RegisteredListener l : en.getValue()) {
+                    if (l instanceof MethodBasedListener) {
+                        if (((MethodBasedListener) l).o == listener) {
+                            if (rl == null) rl = new HashSet<>();
+                            rl.add(l);
                         }
                     }
-                    if(rl != null) {
-                        en.getValue().removeAll(rl);
-                    }
+                }
+                if (rl != null) {
+                    en.getValue().removeAll(rl);
                 }
             }
         }
     }
 
     public void unregisterListener(RegisteredListener listener) {
-        for(HabboPlugin habboPlugin : Emulator.getPluginManager().getPlugins()) {
-            for (HashMap<Class<? extends Event>, Set<RegisteredListener>> hm : habboPlugin.listeners) {
-                for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> en : hm.entrySet()) {
-                    Set<RegisteredListener> rl = null;
-                    for (RegisteredListener l : en.getValue()) {
-                        if (l == listener) {
-                            if (rl == null) rl = new HashSet<>();
-                            rl.add(l);
-                        }
+        for (HabboPlugin habboPlugin : Emulator.getPluginManager().getPlugins()) {
+            for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> en : habboPlugin.listeners.entrySet()) {
+                Set<RegisteredListener> rl = null;
+                for (RegisteredListener l : en.getValue()) {
+                    if (l == listener) {
+                        if (rl == null) rl = new HashSet<>();
+                        rl.add(l);
                     }
-                    if (rl != null) {
-                        en.getValue().removeAll(rl);
-                    }
+                }
+                if (rl != null) {
+                    en.getValue().removeAll(rl);
                 }
             }
         }
@@ -229,17 +222,15 @@ public class EventManager {
 
         try {
             long start = System.currentTimeMillis();
-            for(HabboPlugin habboPlugin : Emulator.getPluginManager().getPlugins()) {
-                for (HashMap<Class<? extends Event>, Set<RegisteredListener>> hm : habboPlugin.listeners) {
-                    Set<RegisteredListener> listeners = hm.get(e.getClass());
-                    if (listeners != null) {
-                        for (RegisteredListener list : listeners) {
-                            list.call(e);
-                        }
+            for (HabboPlugin habboPlugin : Emulator.getPluginManager().getPlugins()) {
+                Set<RegisteredListener> listeners = habboPlugin.listeners.get(e.getClass());
+                if (listeners != null) {
+                    for (RegisteredListener list : listeners) {
+                        list.call(e);
                     }
                 }
             }
-            long time = System.currentTimeMillis()-start;
+            long time = System.currentTimeMillis() - start;
             long maxTime = criticalTime.getOrDefault(e.getClass(), -1L);
             if(maxTime > 0 && time > maxTime) {
                 CriticalProcessTimeEvent event = new CriticalProcessTimeEvent(e, time);
