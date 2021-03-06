@@ -31,7 +31,7 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
     protected int orderNum;
     protected boolean visible;
     protected boolean enabled;
-    protected boolean clubOnly;
+    protected int clubOnly;
     protected String layout;
     protected String headerImage;
     protected String teaserImage;
@@ -58,7 +58,7 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
         this.orderNum = set.getInt("order_num");
         this.visible = set.getBoolean("visible");
         this.enabled = set.getBoolean("enabled");
-        this.clubOnly = set.getBoolean("club_only");
+        this.clubOnly = set.getInt("club_only");
         this.layout = set.getString("page_layout");
         this.headerImage = set.getString("page_headline");
         this.teaserImage = set.getString("page_teaser");
@@ -124,8 +124,7 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
         return this.enabled;
     }
 
-    public boolean isClubOnly() {
-        return this.clubOnly;
+    public int isClubOnly() { return this.clubOnly;
     }
 
     public String getLayout() {
