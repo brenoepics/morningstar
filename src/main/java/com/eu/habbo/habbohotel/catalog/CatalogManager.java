@@ -11,6 +11,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
@@ -614,6 +615,16 @@ public class CatalogManager {
                 .findAny().orElse(null);
     }
 
+    public CatalogPage getCatalogPageByLayout(String layoutName) {
+        return this.catalogPages.valueCollection().stream()
+                .filter(p -> p != null &&
+                        p.isVisible() &&
+                        p.isEnabled() &&
+                        p.getRank() < 2 &&
+                        p.getLayout() != null && p.getLayout().equalsIgnoreCase(layoutName)
+                )
+                .findAny().orElse(null);
+    }
 
     public CatalogItem getCatalogItem(int id) {
         final CatalogItem[] item = {null};
@@ -639,9 +650,11 @@ public class CatalogManager {
             @Override
             public boolean execute(CatalogPage object) {
                 if (object.getRank() <= habbo.getHabboInfo().getRank().getId() && object.visible) {
+                    if ((object.isClubOnly() == 1) && !habbo.getHabboStats().hasActiveClub()) {
+                        return false;
+                    }
                     pages.add(object);
                 }
-
                 return true;
             }
         });
@@ -1018,23 +1031,23 @@ public class CatalogManager {
                                         return;
                                     }
 
-                                    InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(habbo.getClient().getHabbo().getHabboInfo().getId(), baseItem, limitedStack, limitedNumber, extradata);
-                                    habboItem.setExtradata("");
-                                    habboItem.needsUpdate(true);
+                                    Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-                                    Emulator.getThreading().run(habboItem);
-                                    Emulator.getGameEnvironment().getGuildManager().setGuild(habboItem, guildId);
-                                    itemsList.add(habboItem);
+                                    if (guild != null && Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo) != null) {
+                                        InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(habbo.getClient().getHabbo().getHabboInfo().getId(), baseItem, limitedStack, limitedNumber, extradata);
+                                        habboItem.setExtradata("");
+                                        habboItem.needsUpdate(true);
 
-                                    if (baseItem.getName().equals("guild_forum")) {
-                                        Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
-                                        if (guild != null) {
+                                        Emulator.getThreading().run(habboItem);
+                                        Emulator.getGameEnvironment().getGuildManager().setGuild(habboItem, guildId);
+                                        itemsList.add(habboItem);
+
+                                        if (baseItem.getName().equals("guild_forum")) {
                                             guild.setForum(true);
                                             guild.needsUpdate = true;
                                             guild.run();
                                         }
                                     }
-
                                 } else if (baseItem.getInteractionType().getType() == InteractionMusicDisc.class) {
                                     SoundTrack track = Emulator.getGameEnvironment().getItemManager().getSoundTrack(item.getExtradata());
 
@@ -1059,9 +1072,6 @@ public class CatalogManager {
                     }
                 }
 
-                UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
-                Emulator.getPluginManager().fireEvent(purchasedEvent);
-
                 if (badgeFound) {
                     habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.ALREADY_HAVE_BADGE));
 
@@ -1070,14 +1080,17 @@ public class CatalogManager {
                     }
                 }
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission("acc_infinite_credits")) {
+                UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
+                Emulator.getPluginManager().fireEvent(purchasedEvent);
+
+                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                     if (purchasedEvent.totalCredits > 0) {
                         habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.totalCredits);
                         habbo.getClient().sendResponse(new UserCreditsComposer(habbo.getClient().getHabbo()));
                     }
                 }
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission("acc_infinite_points")) {
+                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
                     if (purchasedEvent.totalPoints > 0) {
                         habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.totalPoints);
                         habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.totalPoints, item.getPointsType()));
@@ -1119,6 +1132,26 @@ public class CatalogManager {
 
                 habbo.getClient().sendResponse(new PurchaseOKComposer(purchasedEvent.catalogItem));
                 habbo.getClient().sendResponse(new InventoryRefreshComposer());
+
+                THashSet<String> itemIds = new THashSet<>();
+
+                for(HabboItem ix : purchasedEvent.itemsList) {
+                    itemIds.add(ix.getId() + "");
+                }
+
+                if(!free) {
+                    Emulator.getThreading().run(new CatalogPurchaseLogEntry(
+                            Emulator.getIntUnixTimestamp(),
+                            purchasedEvent.habbo.getHabboInfo().getId(),
+                            purchasedEvent.catalogItem != null ? purchasedEvent.catalogItem.getId() : 0,
+                            String.join(";", itemIds),
+                            purchasedEvent.catalogItem != null ? purchasedEvent.catalogItem.getName() : "",
+                            purchasedEvent.totalCredits,
+                            purchasedEvent.totalPoints,
+                            item != null ? item.getPointsType() : 0,
+                            amount
+                    ));
+                }
 
             } catch (Exception e) {
                 LOGGER.error("Exception caught", e);
