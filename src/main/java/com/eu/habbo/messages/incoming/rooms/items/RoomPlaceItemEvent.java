@@ -82,9 +82,9 @@ public class RoomPlaceItemEvent extends MessageHandler {
 
             if(tile == null)
             {
-                int userId = this.client.getHabbo().getHabboInfo().getId();
+                String userName  = this.client.getHabbo().getHabboInfo().getUsername();
                 int roomId = room.getId();
-                ScripterManager.scripterDetected(this.client, "User [" +  userId + "] tried to place a furni with itemId [" + itemId + "] at a tile which is not existing in room [" + roomId + "], tile: [" + x + "," + y + "]");
+                ScripterManager.scripterDetected(this.client, "User [" + userName + "] tried to place a furni with itemId [" + itemId + "] at a tile which is not existing in room [" + roomId + "], tile: [" + x + "," + y + "]");
                 return;
             }
 
