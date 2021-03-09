@@ -44,6 +44,22 @@ public class HabboManager {
         LOGGER.info("Habbo Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
+    public static Habbo getOfflineHabbo(int id) {
+        Habbo info = null;
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ? LIMIT 1")) {
+            statement.setInt(1, id);
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    info = new Habbo(set);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+
+        return info;
+    }
+
     public static HabboInfo getOfflineHabboInfo(int id) {
         HabboInfo info = null;
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ? LIMIT 1")) {
@@ -51,6 +67,24 @@ public class HabboManager {
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
                     info = new HabboInfo(set);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+
+        return info;
+    }
+
+    public static Habbo getOfflineHabbo(String username) {
+        Habbo info = null;
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE username = ? LIMIT 1")) {
+            statement.setString(1, username);
+
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    info = new Habbo(set);
                 }
             }
         } catch (SQLException e) {
@@ -87,7 +121,8 @@ public class HabboManager {
     }
 
     public Habbo getHabbo(int id) {
-        return this.onlineHabbos.get(id);
+        if(this.onlineHabbos.get(id) != null) return this.onlineHabbos.get(id);
+        return getOfflineHabbo(id);
     }
 
     public Habbo getHabbo(String username) {
@@ -98,7 +133,7 @@ public class HabboManager {
             }
         }
 
-        return null;
+        return getOfflineHabbo(username);
     }
 
     public Habbo loadHabbo(String sso) {
