@@ -46,7 +46,18 @@ public enum RoomChatMessageBubbles {
     UNKNOWN_42(42, "", true, false),
     UNKNOWN_43(43, "", true, false),
     UNKNOWN_44(44, "", true, false),
-    UNKNOWN_45(45, "", true, false);
+    UNKNOWN_45(45, "", true, false),
+    //New ones to Nitro/Flash
+    UNKNOWN_46(46, "", true, false),
+    UNKNOWN_47(47, "", true, false),
+    UNKNOWN_48(48, "", true, false),
+    UNKNOWN_49(49, "", true, false),
+    UNKNOWN_50(50, "", true, false),
+    UNKNOWN_51(51, "", true, false),
+    UNKNOWN_52(52, "", true, false),
+    UNKNOWN_53(53, "", true, false),
+    UNKNOWN_54(54, "", true, false),
+    UNKNOWN_55(55, "", true, false);
 
     private final int type;
     private final String permission;
