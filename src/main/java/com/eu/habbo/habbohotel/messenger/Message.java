@@ -13,7 +13,7 @@ public class Message implements Runnable {
 
     private final int fromId;
     private final int toId;
-    private final int timestamp;
+    private int timestamp;
     private String message;
 
     public Message(int fromId, int toId, String message) {
@@ -54,6 +54,10 @@ public class Message implements Runnable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
     }
 
     public int getTimestamp() {

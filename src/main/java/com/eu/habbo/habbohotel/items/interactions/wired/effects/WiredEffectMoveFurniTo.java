@@ -149,10 +149,10 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
 
         for (HabboItem item : this.items) {
             if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
+                itemsToRemove.add(item);
         }
 
-        for (HabboItem item : items) {
+        for (HabboItem item : itemsToRemove) {
             this.items.remove(item);
         }
 

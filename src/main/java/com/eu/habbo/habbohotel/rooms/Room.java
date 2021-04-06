@@ -2577,6 +2577,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     this.roomSpecialTypes.removeUndefined(item);
                 }
             }
+
         }
     }
 

@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
+import com.eu.habbo.messages.outgoing.friends.FriendChatMessageComposer;
 import com.eu.habbo.messages.outgoing.friends.UpdateFriendComposer;
 import com.eu.habbo.plugin.events.users.friends.UserAcceptFriendRequestEvent;
 import gnu.trove.map.hash.THashMap;
@@ -369,6 +370,32 @@ public class Messenger {
                 habboTo.getClient().sendResponse(new UpdateFriendComposer(this.loadFriend(habboTo, userFrom)));
             } else if (habboFrom != null) {
                 habboFrom.getClient().sendResponse(new UpdateFriendComposer(this.loadFriend(habboFrom, userTo)));
+            }
+        }
+    }
+
+    public void processOfflineMessages(int userToId) {
+        Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(userToId);
+
+        if(habbo != null && habbo.getClient() != null) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT user_from_id, message, timestamp FROM messenger_offline WHERE user_to_id = ?")) {
+                statement.setInt(1, userToId);
+
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
+                        Message chatMessage = new Message(set.getInt("user_from_id"), userToId, set.getString("message"));
+                        chatMessage.setTimestamp(set.getInt("timestamp"));
+
+                        habbo.getClient().sendResponse(new FriendChatMessageComposer(chatMessage));
+                    }
+                }
+
+                try (PreparedStatement _statement = connection.prepareStatement("DELETE FROM messenger_offline WHERE user_to_id = ?")) {
+                    _statement.setInt(1, userToId);
+                    _statement.execute();
+                }
+            } catch (SQLException e) {
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
