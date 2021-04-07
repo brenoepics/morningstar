@@ -5,11 +5,11 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.URLClassLoader;
+import java.util.*;
 
 public abstract class HabboPlugin {
-    public final THashMap<Class<? extends Event>, THashSet<Method>> registeredEvents = new THashMap<>();
+    protected HashMap<Class<? extends Event>, Set<EventManager.RegisteredListener>> listeners = new HashMap<>();
 
     public HabboPluginConfiguration configuration;
     public URLClassLoader classLoader;
@@ -20,7 +20,7 @@ public abstract class HabboPlugin {
     public abstract void onDisable() throws Exception;
 
     public boolean isRegistered(Class<? extends Event> clazz) {
-        return this.registeredEvents.containsKey(clazz);
+        return listeners.containsKey(clazz);
     }
 
     public abstract boolean hasPermission(Habbo habbo, String key);
