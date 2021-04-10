@@ -134,7 +134,6 @@ public class CleanerThread implements Runnable {
         LOGGER.info("Database -> Cleaned!");
     }
 
-    //TODO: SEND COMPOSER WITH RESPECTS REFILLED
     public void refillDailyRespects() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET daily_respect_points = ?, daily_pet_respect_points = ?")) {
             statement.setInt(1, Emulator.getConfig().getInt("hotel.daily.respect"));
