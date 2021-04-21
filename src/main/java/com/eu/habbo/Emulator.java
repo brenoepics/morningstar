@@ -402,7 +402,7 @@ public final class Emulator {
                 String what = m.group(3);
                 totalSeconds += amount * map.get(what);
             }
-            catch (Exception ignored) { }
+            catch (NumberFormatException ignored) { }
         }
 
         return totalSeconds;
@@ -433,7 +433,7 @@ public final class Emulator {
                 String what = m.group(3);
                 c.add(map.get(what), amount);
             }
-            catch (Exception ignored) { }
+            catch (NumberFormatException ignored) { }
         }
 
         return c.getTime();
@@ -454,7 +454,7 @@ public final class Emulator {
         Date res = null;
         try {
             res = format.parse(date);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             LOGGER.error("Error parsing date", e);
         }
         return res;
