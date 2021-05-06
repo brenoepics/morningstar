@@ -41,8 +41,14 @@ public class TextsManager {
         }
     }
 
-    public boolean hasValue(String key){
-        return this.texts.containsKey(key);
+    public boolean hasValue(String key) {
+        try {
+            return this.texts.containsKey(key);
+        } catch (Exception e) {
+            LOGGER.error("Caught exception", e);
+        }
+
+        return false;
     }
 
     public String getValue(String key) {
@@ -50,10 +56,16 @@ public class TextsManager {
     }
 
     public String getValue(String key, String defaultValue) {
-        if (!this.texts.containsKey(key)) {
-            LOGGER.error("Text key not found: {}", key);
+        try {
+            if (!this.texts.containsKey(key)) {
+                LOGGER.error("Text key not found: {}", key);
+            }
+            return this.texts.getProperty(key, defaultValue);
+        } catch (Exception e) {
+            LOGGER.error("Caught exception", e);
         }
-        return this.texts.getProperty(key, defaultValue);
+
+        return defaultValue;
     }
 
     public boolean getBoolean(String key) {
@@ -83,9 +95,19 @@ public class TextsManager {
     }
 
     public void update(String key, String value) {
-        this.texts.setProperty(key, value);
+        try {
+            this.texts.setProperty(key, value);
+        } catch (Exception e) {
+            LOGGER.error("Caught exception", e);
+        }
     }
+
     public void updateInDatabase(String key, String value) {
+        if (!hasValue(key)) {
+            register(key, value);
+            return;
+        }
+
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE emulator_texts SET `value`=? WHERE `key`=?;")) {
             statement.setString(1, value);
             statement.setString(2, key);
@@ -96,27 +118,35 @@ public class TextsManager {
     }
 
     public void register(String key, String value) {
-        if (this.texts.getProperty(key, null) != null)
-            return;
+        try {
+            if (this.texts.getProperty(key, null) != null)
+                return;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO emulator_texts VALUES (?, ?)")) {
-            statement.setString(1, key);
-            statement.setString(2, value);
-            statement.execute();
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO emulator_texts VALUES (?, ?)")) {
+                statement.setString(1, key);
+                statement.setString(2, value);
+                statement.execute();
+            } catch (SQLException e) {
+                LOGGER.error("Caught SQL exception", e);
+            }
+
+            this.update(key, value);
+        } catch (Exception e) {
+            LOGGER.error("Caught exception", e);
         }
-
-        this.update(key, value);
     }
 
-    public void remove(String key){
-        texts.remove(key);
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM emulator_texts WHERE `key`=?;")) {
-            statement.setString(1, key);
-            statement.execute();
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+    public void remove(String key) {
+        try {
+            texts.remove(key);
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM emulator_texts WHERE `key`=?;")) {
+                statement.setString(1, key);
+                statement.execute();
+            } catch (SQLException e) {
+                LOGGER.error("Caught SQL exception", e);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Caught exception", e);
         }
     }
 }
