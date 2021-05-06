@@ -41,6 +41,10 @@ public class TextsManager {
         }
     }
 
+    public boolean hasValue(String key){
+        return this.texts.containsKey(key);
+    }
+
     public String getValue(String key) {
         return this.getValue(key, "");
     }
@@ -81,6 +85,15 @@ public class TextsManager {
     public void update(String key, String value) {
         this.texts.setProperty(key, value);
     }
+    public void updateInDatabase(String key, String value) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE emulator_texts SET `value`=? WHERE `key`=?;")) {
+            statement.setString(1, value);
+            statement.setString(2, key);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+    }
 
     public void register(String key, String value) {
         if (this.texts.getProperty(key, null) != null)
@@ -95,5 +108,15 @@ public class TextsManager {
         }
 
         this.update(key, value);
+    }
+
+    public void remove(String key){
+        texts.remove(key);
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM emulator_texts WHERE `key`=?;")) {
+            statement.setString(1, key);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
     }
 }
