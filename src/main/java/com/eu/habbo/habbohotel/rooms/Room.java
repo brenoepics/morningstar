@@ -3846,11 +3846,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void botChat(ServerMessage message) {
-        if (message == null) {
+        if (message == null)
             return;
-        }
 
         for (Habbo habbo : this.getHabbos()) {
+            if (habbo == null)
+                continue;
+
             if (!habbo.getHabboStats().ignoreBots)
                 habbo.getClient().sendResponse(message);
         }
