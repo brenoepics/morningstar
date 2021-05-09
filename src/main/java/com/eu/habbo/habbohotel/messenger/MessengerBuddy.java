@@ -159,8 +159,10 @@ public class MessengerBuddy implements Runnable, ISerialize {
     public void onMessageReceived(Habbo from, String message) {
         Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(this.id);
 
-        if (habbo == null)
+        if (habbo == null) {
+            saveOfflineMessage(from.getHabboInfo().getId(), message);
             return;
+        }
 
         Message chatMessage = new Message(from.getHabboInfo().getId(), this.id, message);
         Emulator.getThreading().run(chatMessage);
@@ -170,6 +172,18 @@ public class MessengerBuddy implements Runnable, ISerialize {
         }
 
         habbo.getClient().sendResponse(new FriendChatMessageComposer(chatMessage));
+    }
+
+    private void saveOfflineMessage(int userFromId, String message) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO messenger_offline (user_to_id, user_from_id, message, sended_on) VALUES (?, ?, ?, ?)")) {
+            statement.setInt(1, this.id);
+            statement.setInt(2, userFromId);
+            statement.setString(3, message);
+            statement.setInt(4, Emulator.getIntUnixTimestamp());
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
     }
 
     @Override
@@ -182,9 +196,15 @@ public class MessengerBuddy implements Runnable, ISerialize {
         message.appendString(this.look);
         message.appendInt(0); // Friends category ID
         message.appendString(this.motto);
+<<<<<<< HEAD
+        message.appendString("");
+        message.appendString("");
+        message.appendBoolean(true); //Offline messaging.
+=======
         message.appendString(""); //Last seen as DATETIMESTRING
         message.appendString(""); // Realname or Facebookame as String
         message.appendBoolean(false); //Offline messaging.
+>>>>>>> 8d8b9c175c0815d367f2fe0bc3c4b24760b8bb1c
         message.appendBoolean(false);
         message.appendBoolean(false);
         message.appendShort(this.relation);
