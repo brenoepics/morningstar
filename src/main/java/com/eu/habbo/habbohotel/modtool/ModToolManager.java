@@ -14,6 +14,7 @@ import com.eu.habbo.messages.outgoing.modtool.ModToolIssueInfoComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolUserInfoComposer;
 import com.eu.habbo.plugin.events.support.*;
 import com.eu.habbo.plugin.events.users.UserBannedEvent;
+import com.eu.habbo.plugin.events.users.UserUnbannedEvent;
 import com.eu.habbo.threading.runnables.InsertModToolIssue;
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
@@ -574,8 +575,14 @@ public class ModToolManager {
         return false;
     }
 
-    public boolean unban(String username) {
+    public boolean unban(Habbo executor, String username) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bans INNER JOIN users ON bans.user_id = users.id SET ban_expire = ?, ban_reason = CONCAT('" + Emulator.getTexts().getValue("unbanned") + ": ', ban_reason) WHERE users.username LIKE ? AND ban_expire > ?")) {
+            UserUnbannedEvent userUnbannedEvent = new UserUnbannedEvent(executor, username);
+            Emulator.getPluginManager().fireEvent(userUnbannedEvent);
+            if (userUnbannedEvent.isCancelled()){
+                return false;
+            }
+
             statement.setInt(1, Emulator.getIntUnixTimestamp());
             statement.setString(2, username);
             statement.setInt(3, Emulator.getIntUnixTimestamp());
