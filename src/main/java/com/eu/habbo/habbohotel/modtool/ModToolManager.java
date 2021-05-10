@@ -13,6 +13,7 @@ import com.eu.habbo.messages.outgoing.modtool.ModToolIssueHandledComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolIssueInfoComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolUserInfoComposer;
 import com.eu.habbo.plugin.events.support.*;
+import com.eu.habbo.plugin.events.users.UserBannedEvent;
 import com.eu.habbo.threading.runnables.InsertModToolIssue;
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
@@ -442,6 +443,12 @@ public class ModToolManager {
         Emulator.getPluginManager().fireEvent(new SupportUserBannedEvent(moderator, target, ban));
         Emulator.getThreading().run(ban);
         bans.add(ban);
+
+        UserBannedEvent userBannedEvent = new UserBannedEvent(moderator, offlineInfo, ban);
+        Emulator.getPluginManager().fireEvent(userBannedEvent);
+        if (userBannedEvent.isCancelled()){
+            return bans;
+        }
 
         if (target != null) {
             Emulator.getGameServer().getGameClientManager().disposeClient(target.getClient());
