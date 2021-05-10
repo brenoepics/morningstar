@@ -7,12 +7,12 @@ public class UserCommandEvent extends UserEvent {
     public final String[] args;
 
 
-    public final boolean succes;
+    public final boolean success;
 
 
-    public UserCommandEvent(Habbo habbo, String[] args, boolean succes) {
+    public UserCommandEvent(Habbo habbo, String[] args, boolean success) {
         super(habbo);
         this.args = args;
-        this.succes = succes;
+        this.success = success;
     }
 }
