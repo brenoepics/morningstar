@@ -4126,8 +4126,21 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             duration += Emulator.getIntUnixTimestamp();
         }
 
-        if (this.allowEffects && roomUnit != null) {
-            roomUnit.setEffectId(effectId, duration);
+        if (roomUnit == null || roomUnit.getRoom() == null){
+            return;
+        }
+
+        UserEffectEvent userEffectEvent = new UserEffectEvent(roomUnit.getRoom().getHabbo(roomUnit));
+        userEffectEvent.setEffectID(effectId);
+        userEffectEvent.setDuration(duration);
+
+        Emulator.getEventManager().callEvent(userEffectEvent);
+        if (userEffectEvent.isCancelled()){
+            return;
+        }
+
+        if (this.allowEffects) {
+            roomUnit.setEffectId(userEffectEvent.getEffectID(), userEffectEvent.getDuration());
             this.sendComposer(new RoomUserEffectComposer(roomUnit).compose());
         }
     }
