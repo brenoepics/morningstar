@@ -145,7 +145,7 @@ public class PermissionsManager {
         return false;
     }
 
-    public boolean registerPermission(String permission, List<String> options, String defaultPermission){
+    public boolean registerPermission(String permission, String defaultPermission, String... options){
         if (permissionExists(permission)){
             return true;
         }
