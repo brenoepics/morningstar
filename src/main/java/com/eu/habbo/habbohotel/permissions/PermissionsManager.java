@@ -11,10 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 public class PermissionsManager {
+    private final static String insertPermission = "ALTER TABLE permissions ADD COLUMN IF NOT EXISTS :permission ENUM(:options) NOT NULL DEFAULT :defaultPermission;";
+    private final static String deletePermission = "ALTER TABLE permissions DROP COLUMN IF EXISTS :permission;";
     private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsManager.class);
 
     private final TIntObjectHashMap<Rank> ranks;
@@ -90,6 +93,9 @@ public class PermissionsManager {
         return this.ranks.get(rankId);
     }
 
+    public Collection<Rank> getRanks(){
+        return this.ranks.valueCollection();
+    }
 
     public Rank getRankByName(String rankName) {
         for (Rank rank : this.ranks.valueCollection()) {
@@ -128,6 +134,58 @@ public class PermissionsManager {
 
     public boolean hasPermission(Rank rank, String permission, boolean withRoomRights) {
         return rank.hasPermission(permission, withRoomRights);
+    }
+
+    public boolean permissionExists(String permission){
+        for(Rank r : this.ranks.valueCollection()){
+            if (r.getPermissions().containsKey(permission)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean registerPermission(String permission, List<String> options, String defaultPermission){
+        if (permissionExists(permission)){
+            return true;
+        }
+
+        try {
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String s : options){
+                if (stringBuilder.toString().equals("")){
+                    stringBuilder.append("'").append(s).append("'");
+                } else {
+                    stringBuilder.append(", '").append(s).append("'");
+                }
+            }
+
+            String sql = insertPermission.replace(":permission", "`"+permission+"`").replace(":options", stringBuilder.toString()).replace(":defaultPermission", "'"+defaultPermission+"'");
+            PreparedStatement preparedStatement = Emulator.getDatabase().getDataSource().getConnection().prepareStatement(sql);
+            return preparedStatement.execute();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        } finally {
+            loadPermissions();
+        }
+        return false;
+    }
+
+    public boolean deletePermission(String permission){
+        if (!permissionExists(permission)){
+            return true;
+        }
+
+        try {
+            String sql = deletePermission.replace(":permission", "`"+permission+"`");
+            PreparedStatement preparedStatement = Emulator.getDatabase().getDataSource().getConnection().prepareStatement(sql);
+            return preparedStatement.execute();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        } finally {
+            loadPermissions();
+        }
+        return false;
     }
 
     public Set<String> getStaffBadges() {

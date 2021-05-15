@@ -73,9 +73,7 @@ public class Rank {
     public boolean hasPermission(String key, boolean isRoomOwner) {
         if (this.permissions.containsKey(key)) {
             Permission permission = this.permissions.get(key);
-
-            return permission.setting == PermissionSetting.ALLOWED || permission.setting == PermissionSetting.ROOM_OWNER && isRoomOwner;
-
+            return permission.setting == PermissionSetting.ALLOWED || (permission.setting == PermissionSetting.ROOM_OWNER && isRoomOwner);
         }
 
         return false;
