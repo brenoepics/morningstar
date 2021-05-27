@@ -64,7 +64,7 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON> {
                         }
                     }
 
-                    if (found) {
+                    if (found >= 1) {
                         this.status = RCONMessage.STATUS_ERROR;
                         this.message += Emulator.getTexts().getValue("commands.error.cmd_badge.already_owns").replace("%user%", username).replace("%badge%", badgeCode) + "\r";
                     } else {
