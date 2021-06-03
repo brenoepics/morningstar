@@ -25,6 +25,9 @@ public class FriendRequestEvent extends MessageHandler {
         String username = this.packet.readString();
         Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(username);
 
+        if (habbo == null)
+        return;
+        
         if (habbo.getHabboInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
             return;
         }
