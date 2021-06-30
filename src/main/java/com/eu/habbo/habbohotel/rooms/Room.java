@@ -2671,6 +2671,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             habbo.getRoomUnit().getCurrentLocation().removeUnit(habbo.getRoomUnit());
         }
 
+        synchronized (this.roomUnitLock) {
+            this.currentHabbos.remove(habbo.getHabboInfo().getId());
+        }
+
         if (sendRemovePacket && habbo.getRoomUnit() != null && !habbo.getRoomUnit().isTeleporting) {
             this.sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
         }
@@ -2685,10 +2689,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     LOGGER.error("Caught exception", e);
                 }
             }
-        }
-
-        synchronized (this.roomUnitLock) {
-            this.currentHabbos.remove(habbo.getHabboInfo().getId());
         }
 
         if (habbo.getHabboInfo().getCurrentGame() != null) {
