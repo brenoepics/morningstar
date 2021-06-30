@@ -3820,10 +3820,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void sendComposer(ServerMessage message) {
         for (Habbo habbo : this.getHabbos()) {
-            if (habbo.getClient() == null) {
-                this.removeHabbo(habbo, true);
-                continue;
-            }
+            if (habbo.getClient() == null) continue;
 
             habbo.getClient().sendResponse(message);
         }
