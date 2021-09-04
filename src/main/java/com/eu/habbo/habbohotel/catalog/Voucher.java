@@ -54,7 +54,7 @@ public class Voucher {
     }
 
     public boolean isExhausted() {
-        return this.amount > 0 && this.history.size() >= this.amount;
+        return this.amount > 0 && Math.toIntExact(this.history.stream().filter(h -> h.getVoucherId() == this.id).count()) >= this.amount;
     }
 
     public void addHistoryEntry(int userId) {
