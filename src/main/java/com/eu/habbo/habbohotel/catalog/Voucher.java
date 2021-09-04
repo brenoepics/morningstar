@@ -50,7 +50,7 @@ public class Voucher {
     }
 
     public boolean hasUserExhausted(int userId) {
-        return this.limit > 0 && Math.toIntExact(this.history.stream().filter(h -> h.getUserId() == userId).count()) >= this.limit;
+        return this.limit > 0 && Math.toIntExact(this.history.stream().filter(h -> h.getVoucherId() == this.id && h.getUserId() == userId).count()) >= this.limit;
     }
 
     public boolean isExhausted() {
