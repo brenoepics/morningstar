@@ -38,7 +38,8 @@ public class Voucher {
     }
 
     private void loadHistory() {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM voucher_history")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM voucher_history WHERE voucher_id = ?")) {
+			statement.setInt(1, this.id);
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     this.history.add(new VoucherHistoryEntry(set));
@@ -50,11 +51,11 @@ public class Voucher {
     }
 
     public boolean hasUserExhausted(int userId) {
-        return this.limit > 0 && Math.toIntExact(this.history.stream().filter(h -> h.getVoucherId() == this.id && h.getUserId() == userId).count()) >= this.limit;
+        return this.limit > 0 && Math.toIntExact(this.history.stream().filter(h -> h.getUserId() == userId).count()) >= this.limit;
     }
 
     public boolean isExhausted() {
-        return this.amount > 0 && Math.toIntExact(this.history.stream().filter(h -> h.getVoucherId() == this.id).count()) >= this.amount;
+        return this.amount > 0 && this.history.size() >= this.amount;
     }
 
     public void addHistoryEntry(int userId) {
