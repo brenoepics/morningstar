@@ -291,7 +291,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
     private RoomUserRotation getMovementDirection() {
         RoomUserRotation movemementDirection = RoomUserRotation.NORTH;
         if (this.direction == 1) {
-            movemementDirection = RoomUserRotation.values()[Emulator.getRandom().nextInt(RoomUserRotation.values().length / 2) * 2];
+            movemementDirection = RoomUserRotation.values()[Emulator.getRandom().nextInt(RoomUserRotation.values().length)];
         } else if (this.direction == 2) {
             if (Emulator.getRandom().nextInt(2) == 1) {
                 movemementDirection = RoomUserRotation.EAST;
