@@ -56,7 +56,7 @@ public final class Emulator {
     public static boolean isShuttingDown = false;
     public static boolean stopped = false;
     public static boolean debugging = false;
-    public static boolean console = false; // Set console output default to false
+    private static boolean console = false; // Set console output default to false
     private static int timeStarted = 0;
     private static Runtime runtime;
     private static ConfigurationManager config;
