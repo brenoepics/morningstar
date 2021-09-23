@@ -56,6 +56,7 @@ public final class Emulator {
     public static boolean isShuttingDown = false;
     public static boolean stopped = false;
     public static boolean debugging = false;
+    private static boolean console = false; // Set console output default to false
     private static int timeStarted = 0;
     private static Runtime runtime;
     private static ConfigurationManager config;
@@ -175,26 +176,31 @@ public final class Emulator {
                         Runtime.getRuntime().availableProcessors() * 2);
             }
 
-
             Emulator.getThreading().run(() -> {
             }, 1500);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            // Check if console mode is true or false, default is false
+            Emulator.console = Emulator.getConfig().getBoolean("console.mode");
 
-            while (!isShuttingDown && isReady) {
-                try {
-                    String line = reader.readLine();
+            if (console) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-                    if (line != null) {
-                        ConsoleCommand.handle(line);
-                    }
-                    System.out.println("Waiting for command: ");
-                } catch (Exception e) {
-                    if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
-                        LOGGER.error("Error while reading command", e);
+                while (!isShuttingDown && isReady) {
+                    try {
+                        String line = reader.readLine();
+
+                        if (line != null) {
+                            ConsoleCommand.handle(line);
+                        }
+                        System.out.println("Waiting for command: ");
+                    } catch (Exception e) {
+                        if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
+                            LOGGER.error("Error while reading command", e);
+                        }
                     }
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
