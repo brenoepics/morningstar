@@ -1,0 +1,1 @@
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('console.mode', '1');
