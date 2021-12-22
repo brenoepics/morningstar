@@ -14,11 +14,7 @@ import com.eu.habbo.messages.outgoing.rooms.FloodCounterComposer;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.*;
-import com.eu.habbo.plugin.events.furniture.FurnitureBuildheightEvent;
-import com.eu.habbo.plugin.events.users.UserCreditsEvent;
-import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
-import com.eu.habbo.plugin.events.users.UserGetIPAddressEvent;
-import com.eu.habbo.plugin.events.users.UserPointsEvent;
+import com.eu.habbo.plugin.events.users.*;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -414,7 +410,15 @@ public class Habbo implements Runnable {
         }
 
         if (!this.hasPermission("acc_no_mute")) {
-            int remaining = this.habboStats.addMuteTime(seconds);
+            UserMuteEvent userMuteEvent = new UserMuteEvent(this);
+            userMuteEvent.setSeconds(seconds);
+            Emulator.getPluginManager().fireEvent(userMuteEvent);
+            if (userMuteEvent.isCancelled()){
+                return;
+            }
+
+
+            int remaining = this.habboStats.addMuteTime(userMuteEvent.getSeconds());
             this.client.sendResponse(new FloodCounterComposer(remaining));
             this.client.sendResponse(new MutedWhisperComposer(remaining));
 
@@ -426,6 +430,11 @@ public class Habbo implements Runnable {
     }
 
     public void unMute() {
+        UserUnMuteEvent userUnMuteEvent = new UserUnMuteEvent(this);
+        Emulator.getPluginManager().fireEvent(userUnMuteEvent);
+        if (userUnMuteEvent.isCancelled()){
+            return;
+        }
         this.habboStats.unMute();
         this.client.sendResponse(new FloodCounterComposer(3));
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
