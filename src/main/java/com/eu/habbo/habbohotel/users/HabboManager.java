@@ -169,6 +169,13 @@ public class HabboManager {
         return this.getHabbo(id).getHabboInfo();
     }
 
+    public HabboInfo getHabboInfo(String username){
+        if (this.getHabbo(username) == null) {
+            return getOfflineHabboInfo(username);
+        }
+        return this.getHabbo(username).getHabboInfo();
+    }
+
     public int getOnlineCount() {
         return this.onlineHabbos.size();
     }
