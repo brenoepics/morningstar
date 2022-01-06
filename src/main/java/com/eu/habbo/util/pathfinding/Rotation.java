@@ -22,4 +22,14 @@ public class Rotation {
         }
         return Rotation;
     }
-}
+    
+   public static int RotationIverse(int rot)
+        {
+            if (rot > 3)
+                rot = rot - 4;
+            else
+                rot = rot + 4;
+
+            return rot;
+        }
+    }
