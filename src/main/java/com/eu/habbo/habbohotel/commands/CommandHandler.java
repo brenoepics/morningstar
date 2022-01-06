@@ -12,17 +12,16 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTypingComposer;
+import com.eu.habbo.plugin.HabboPlugin;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.THashMap;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class CommandHandler {
 
@@ -53,13 +52,28 @@ public class CommandHandler {
     public static void addCommand(Class<? extends Command> command) {
         try {
             //command.getConstructor().setAccessible(true);
-            addCommand(command.newInstance());
-            LOGGER.debug("Added command: {}", command.getName());
+            addCommand(command.getConstructor().newInstance());
         } catch (Exception e) {
             LOGGER.error("Caught exception", e);
         }
     }
 
+    /**
+     * Register all commands in package XY automatically.
+     * Classes with the annotation {@link SkipCommandRegistration} are skipped
+     * @param habboPlugin
+     * @param packagePath
+     */
+    public static void addCommandsInPackage(HabboPlugin habboPlugin, String packagePath){
+        Reflections reflections = new Reflections(packagePath);
+        for(Class<? extends Command> clazz : reflections.getSubTypesOf(Command.class)){
+
+            if (clazz.isAnnotationPresent(SkipCommandRegistration.class)){
+                continue;
+            }
+            addCommand(clazz);
+        }
+    }
 
     public static boolean handleCommand(GameClient gameClient, String commandLine) {
         if (gameClient != null) {
