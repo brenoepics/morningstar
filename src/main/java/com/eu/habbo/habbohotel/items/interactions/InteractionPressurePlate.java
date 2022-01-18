@@ -66,6 +66,11 @@ public class InteractionPressurePlate extends InteractionDefault {
         updateState(room);
     }
 
+    @Override
+    public void onPickUp(Room room) {
+        this.setExtradata("0");
+    }
+
     public void updateState(Room room) {
         boolean occupied = false;
 
