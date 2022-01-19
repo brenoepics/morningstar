@@ -50,6 +50,7 @@ public class RoomChatMessage implements Runnable, ISerialize, Loggable {
             for (Integer i : RoomChatMessage.BANNED_BUBBLES) {
                 if (i == this.bubble.getType()) {
                     this.bubble = RoomChatMessageBubbles.NORMAL;
+                    break;
                 }
             }
         }
