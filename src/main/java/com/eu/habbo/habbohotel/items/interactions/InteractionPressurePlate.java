@@ -37,7 +37,10 @@ public class InteractionPressurePlate extends InteractionDefault {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        super.onClick(client, room, objects);
+        if(room.hasHabbosAt(this.getX(), this.getY())) {
+            return;
+        };
+            super.onClick(client, room, objects);
     }
 
     @Override
