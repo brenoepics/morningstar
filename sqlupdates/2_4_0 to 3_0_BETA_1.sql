@@ -83,7 +83,6 @@ INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('room.chat.mutearea.allo
 DELETE FROM `emulator_settings` WHERE `key` IN ('hotel.max.rooms.per.user', 'hotel.max.rooms.user', 'hotel.max.rooms.vip', 'max.friends', 'hotel.max.friends', 'max.friends.hc', 'hotel.max.friends.hc');
 
 ALTER TABLE `users_settings` ADD COLUMN `max_friends` int(10) NULL DEFAULT 300 AFTER `has_gotten_default_saved_searches`;
-ALTER TABLE `users_settings` ADD COLUMN `max_rooms` int(10) NULL DEFAULT 50 AFTER `has_gotten_default_saved_searches`;
 ALTER TABLE `users_settings` ADD COLUMN `last_hc_payday` int(10) NULL DEFAULT 0 AFTER `has_gotten_default_saved_searches`;
 ALTER TABLE `users_settings` ADD COLUMN `hc_gifts_claimed` int(10) NULL DEFAULT 0 AFTER `has_gotten_default_saved_searches`;
 
