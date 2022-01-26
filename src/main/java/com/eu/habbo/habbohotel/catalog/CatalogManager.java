@@ -957,14 +957,24 @@ public class CatalogManager {
                                     throw new Exception("Failed to create bot of type: " + type);
                                 }
                             } else if (baseItem.getType() == FurnitureType.EFFECT) {
+                                int effectDuration;
+                                try {
+                                    effectDuration = Integer.parseInt(extradata);
+                                } catch (Exception e) {
+                                    LOGGER.error("Caught exception", e);
+                                    habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+                                    return;
+                                }
                                 int effectId = baseItem.getEffectM();
-
                                 if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
                                     effectId = baseItem.getEffectF();
                                 }
-
                                 if (effectId > 0) {
-                                    habbo.getInventory().getEffectsComponent().createEffect(effectId);
+                                    if (effectDuration > 0) {
+                                        habbo.getInventory().getEffectsComponent().createEffect(effectId, effectDuration);
+                                    } else {
+                                        habbo.getInventory().getEffectsComponent().createEffect(effectId);
+                                    }
                                 }
                             } else if (Item.isPet(baseItem)) {
                                 String[] data = extradata.split("\n");
