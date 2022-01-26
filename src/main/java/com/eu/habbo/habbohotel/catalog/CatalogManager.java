@@ -1135,7 +1135,7 @@ public class CatalogManager {
                     habbo.getClient().sendResponse(new AddUserBadgeComposer(badge));
                     THashMap<String, String> keys = new THashMap<>();
                     keys.put("display", "BUBBLE");
-                    keys.put("image", "${image.library.url}album1584/" + badge.getCode() + ".gif");
+                    keys.put("image", "${image.library.url}album1584/" + badge.getCode() + Emulator.getConfig().getValue("hotel.catalogue.badgeimage.type")); //.gif or .png
                     keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
                     habbo.getClient().sendResponse(new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
                     unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BADGE).add(badge.getId());
