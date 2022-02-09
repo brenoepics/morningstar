@@ -167,6 +167,15 @@ public class CatalogManager {
                     case builders_club_loyalty:
                         this.put(layout.name().toLowerCase(), BuildersClubLoyaltyLayout.class);
                         break;
+                    case mad_money:
+                        this.put(layout.name().toLowerCase(), MadMoneyLayout.class);
+                        break;
+                    case monkey:
+                        this.put(layout.name().toLowerCase(), InfoMonkeyLayout.class);
+                        break;
+                    case niko:
+                        this.put(layout.name().toLowerCase(), InfoNikoLayout.class);
+                        break;
                     case default_3x3:
                     default:
                         this.put("default_3x3", Default_3x3Layout.class);
@@ -957,14 +966,24 @@ public class CatalogManager {
                                     throw new Exception("Failed to create bot of type: " + type);
                                 }
                             } else if (baseItem.getType() == FurnitureType.EFFECT) {
+                                int effectDuration;
+                                try {
+                                    effectDuration = Integer.parseInt(item.getExtradata());
+                                } catch (Exception e) {
+                                    LOGGER.error("Caught exception", e);
+                                    habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+                                    return;
+                                }
                                 int effectId = baseItem.getEffectM();
-
                                 if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
                                     effectId = baseItem.getEffectF();
                                 }
-
                                 if (effectId > 0) {
-                                    habbo.getInventory().getEffectsComponent().createEffect(effectId);
+                                    if (effectDuration > 0) {
+                                        habbo.getInventory().getEffectsComponent().createEffect(effectId, effectDuration);
+                                    } else {
+                                        habbo.getInventory().getEffectsComponent().createEffect(effectId);
+                                    }
                                 }
                             } else if (Item.isPet(baseItem)) {
                                 String[] data = extradata.split("\n");
@@ -1125,7 +1144,7 @@ public class CatalogManager {
                     habbo.getClient().sendResponse(new AddUserBadgeComposer(badge));
                     THashMap<String, String> keys = new THashMap<>();
                     keys.put("display", "BUBBLE");
-                    keys.put("image", "${image.library.url}album1584/" + badge.getCode() + ".gif");
+                    keys.put("image", "${image.library.url}album1584/" + badge.getCode() + Emulator.getConfig().getValue("hotel.catalogue.badgeimage.type", ".png"));
                     keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
                     habbo.getClient().sendResponse(new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
                     unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BADGE).add(badge.getId());

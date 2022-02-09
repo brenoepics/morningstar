@@ -106,11 +106,24 @@ public enum CatalogPageLayouts {
 
     vip_buy,
 
+
     frontpage_featured,
+
 
     builders_club_addons,
 
+
     builders_club_frontpage,
 
-    builders_club_loyalty
+
+    builders_club_loyalty,
+
+
+    mad_money,
+
+
+    monkey,
+
+
+    niko
 }
