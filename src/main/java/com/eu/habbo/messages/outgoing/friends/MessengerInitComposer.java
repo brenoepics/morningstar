@@ -15,6 +15,7 @@ public class MessengerInitComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
+
         this.response.init(Outgoing.MessengerInitComposer);
         if (this.habbo.hasPermission("acc_infinite_friends")) {
             this.response.appendInt(Integer.MAX_VALUE);
@@ -25,9 +26,18 @@ public class MessengerInitComposer extends MessageComposer {
             this.response.appendInt(1337);
             this.response.appendInt(Messenger.MAXIMUM_FRIENDS_HC);
         }
+        if (this.habbo.getHabboInfo().getFriendListCategories() != "") {
 
-        //this.response.appendInt(1000);
-        this.response.appendInt(0);
+            String[] friendcats = this.habbo.getHabboInfo().getFriendListCategories().split(";");
+            this.response.appendInt(friendcats.length);
+            int i = 0;
+            for (String fc : friendcats) {
+                this.response.appendInt(i++);
+                this.response.appendString(fc);
+            }
+        } else {
+            this.response.appendInt(0);
+        }
         return this.response;
     }
 }

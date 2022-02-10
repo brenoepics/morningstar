@@ -54,6 +54,7 @@ public class HabboInfo implements Runnable {
     private String photoJSON;
     private int webPublishTimestamp;
     private String machineID;
+    private String FriendListCategories;
     private List<NavigatorSavedSearch> savedSearches = new ArrayList<>();
 
     public HabboInfo(ResultSet set) {
@@ -80,6 +81,7 @@ public class HabboInfo implements Runnable {
             this.homeRoom = set.getInt("home_room");
             this.lastOnline = set.getInt("last_online");
             this.machineID = set.getString("machine_id");
+            this.FriendListCategories = set.getString("friendlistcategories");
             this.online = false;
             this.currentRoom = null;
         } catch (SQLException e) {
@@ -472,6 +474,10 @@ public class HabboInfo implements Runnable {
 
     public void setMachineID(String machineID) {
         this.machineID = machineID;
+    }
+
+    public String getFriendListCategories() {
+        return this.FriendListCategories;
     }
 
     public List<NavigatorSavedSearch> getSavedSearches() {

@@ -27,17 +27,19 @@ public class MessengerBuddy implements Runnable, ISerialize {
     private short relation;
     private boolean inRoom;
     private int userOne = 0;
+    private int categoryId = 0;
 
     public MessengerBuddy(ResultSet set) {
         try {
             this.id = set.getInt("id");
             this.username = set.getString("username");
             this.gender = HabboGender.valueOf(set.getString("gender"));
-            this.online = set.getInt("online");
+            this.online = Integer.valueOf(set.getString("online"));
             this.motto = set.getString("motto");
             this.look = set.getString("look");
             this.relation = (short) set.getInt("relation");
             this.userOne = set.getInt("user_one_id");
+            this.categoryId = set.getInt("category");
             this.inRoom = false;
             if (this.online == 1) {
                 Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(this.username);
@@ -58,7 +60,6 @@ public class MessengerBuddy implements Runnable, ISerialize {
             this.look = set.getString("look");
             this.relation = 0;
             this.userOne = 0;
-            this.online = set.getInt("online");
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
         }
@@ -143,6 +144,10 @@ public class MessengerBuddy implements Runnable, ISerialize {
     public void inRoom(boolean value) {
         this.inRoom = value;
     }
+    
+    public int getCategoryId() {
+        return this.categoryId;
+    }
 
     @Override
     public void run() {
@@ -181,10 +186,10 @@ public class MessengerBuddy implements Runnable, ISerialize {
         message.appendBoolean(this.online == 1);
         message.appendBoolean(this.inRoom); //IN ROOM
         message.appendString(this.look);
-        message.appendInt(0); // Friends category ID
+        message.appendInt(this.categoryId); //Friends category ID
         message.appendString(this.motto);
         message.appendString(""); //Last seen as DATETIMESTRING
-        message.appendString(""); // Realname or Facebookame as String
+        message.appendString(""); //Realname or Facebookame as String
         message.appendBoolean(false); //Offline messaging.
         message.appendBoolean(false);
         message.appendBoolean(false);
