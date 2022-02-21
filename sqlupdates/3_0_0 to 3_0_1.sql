@@ -33,11 +33,6 @@ CREATE TABLE `calendar_campaigns` (
 );
 
 -- ----------------------------
--- Records of calendar_campaigns
--- ----------------------------
-INSERT INTO `calendar_campaigns` VALUES ('1', 'test', '', '2022-02-09 16:49:13', '31', '1', '1');
-
--- ----------------------------
 -- Table structure for calendar_rewards
 -- ----------------------------
 DROP TABLE IF EXISTS `calendar_rewards`;
@@ -58,26 +53,6 @@ CREATE TABLE `calendar_rewards` (
 );
 
 -- ----------------------------
--- Records of calendar_rewards
--- ----------------------------
-INSERT INTO `calendar_rewards` VALUES ('144', '1', '%credits%credit_prize_14', 'client_static/advent_extras_coins.png', '1', '0', '0', '0', '', '0', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('145', '1', '%credits%credit_prize_14', 'client_static/advent_extras_coins.png', '2', '0', '0', '0', '', '0', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('143', '1', 'duckets_%pixels%', 'client_static/advent_extras_ducket.png', '0', '200', '0', '0', '', '0', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('142', '1', 'duckets_%pixels%', 'client_static/advent_extras_ducket.png', '0', '100', '0', '0', '', '0', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('146', '1', '%item%', '', '0', '0', '0', '0', '', '3030', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('147', '1', 'val_hSeat_3', '', '0', '0', '0', '0', '', '3388', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('148', '1', '%item%', '', '0', '0', '0', '0', '', '3371', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('149', '1', '%item%', '', '0', '0', '0', '0', '', '10481', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('150', '1', '%item%', '', '0', '0', '0', '0', '', '11259', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('151', '1', '%item%', '', '0', '0', '0', '0', '', '4432', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('152', '1', '%item%', '', '0', '0', '0', '0', '', '44480', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('153', '1', '%item%', '', '0', '0', '0', '0', '', '9951', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('154', '1', '%item%', '', '0', '0', '0', '0', '', '4926', null, '0');
-INSERT INTO `calendar_rewards` VALUES ('155', '1', '%subscription_type%_VIP_%subscription_days%_DAYS', 'client_static/advent_extras_hc.png', '0', '0', '0', '0', '', '0', 'HABBO_CLUB', '3');
-INSERT INTO `calendar_rewards` VALUES ('1', '1', '%subscription_type%_VIP_%subscription_days%_DAY', 'client_static/advent_extras_hc.png', '0', '0', '0', '0', '', '0', 'HABBO_CLUB', '1');
-INSERT INTO `calendar_rewards` VALUES ('3', '1', 'xmas_c19_unicornfigure2', '', '0', '0', '0', '0', '', '10929', null, '0');
-
--- ----------------------------
 -- Table structure for calendar_rewards_claimed
 -- ----------------------------
 DROP TABLE IF EXISTS `calendar_rewards_claimed`;
@@ -89,7 +64,7 @@ CREATE TABLE `calendar_rewards_claimed` (
         `timestamp` timestamp NOT NULL
 );
 
-INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.calendar.default', 'test');
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.calendar.default', 'xmas15');
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.calendar.pixels.hc_modifier', '2.0');
 
 -- Calendar force open
