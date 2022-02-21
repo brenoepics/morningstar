@@ -52,7 +52,7 @@ CREATE TABLE `calendar_rewards` (
      `points_type` int NOT NULL DEFAULT '0',
      `badge` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
      `item_id` int NOT NULL DEFAULT '0',
-     `subscription_type` enum('HABBO_CLUB') CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+     `subscription_type` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT '',
      `subscription_days` int NOT NULL DEFAULT '0',
      PRIMARY KEY (`id`) USING BTREE
 );
@@ -92,6 +92,7 @@ CREATE TABLE `calendar_rewards_claimed` (
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.calendar.default', 'test');
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.calendar.pixels.hc_modifier', '2.0');
 
+-- Calendar force open
 ALTER TABLE `permissions` ADD COLUMN `acc_calendar_force` enum('0','1') NULL DEFAULT '0';
 
 -- UpdateCalendar command.
