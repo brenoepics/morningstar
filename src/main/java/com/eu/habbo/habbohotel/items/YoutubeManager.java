@@ -75,6 +75,7 @@ public class YoutubeManager {
 
     private final THashMap < Integer, ArrayList < YoutubePlaylist >> playlists = new THashMap < > ();
     private final THashMap < String, YoutubePlaylist > playlistCache = new THashMap < > ();
+    private final String apiKey = Emulator.getConfig().getValue("youtube.apikey");
 
     public void load() {
         this.playlists.clear();
@@ -128,7 +129,8 @@ public class YoutubeManager {
 
     public YoutubePlaylist getPlaylistDataById(String playlistId) throws IOException {
         if (this.playlistCache.containsKey(playlistId)) return this.playlistCache.get(playlistId);
-        final String apiKey = Emulator.getConfig().getValue("youtube.apikey");
+        if(apiKey.isEmpty()) return null;
+
         YoutubePlaylist playlist;
         URL playlistInfo = new URL("https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&id=" + playlistId + "&maxResults=1&key=" + apiKey);
         HttpsURLConnection playlistCon = (HttpsURLConnection) playlistInfo.openConnection();
