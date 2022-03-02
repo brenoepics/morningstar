@@ -6,6 +6,9 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_stalk.
 -- Enable or Disable TTY in console (Default is enabled)
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('console.mode', '1');
 
+-- Youtube Api v3 key to YoutubeManager
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('youtube.apikey', '');
+
 -- Add friendship categories table
 CREATE TABLE `messenger_categories` (
     `id` int NOT NULL AUTO_INCREMENT,
@@ -14,5 +17,6 @@ CREATE TABLE `messenger_categories` (
     UNIQUE KEY `identifier` (`id`)
 );
 
--- Set an ID (tinyint[3]) from category list items
-ALTER TABLE messenger_friendships ADD category TINYINT(3) NOT NULL DEFAULT '0' AFTER friends_since;
+-- Set an ID (int) from category list items
+ALTER TABLE messenger_friendships ADD category int NOT NULL DEFAULT '0' AFTER friends_since;
+
