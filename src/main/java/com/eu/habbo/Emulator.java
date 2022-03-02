@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
 public final class Emulator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Emulator.class);
-    private static final String OS_NAME = System.getProperty("os.name");
-    private static final String CLASS_PATH = System.getProperty("java.class.path");
+    private static final String OS_NAME = (System.getProperty("os.name") != null ? System.getProperty("os.name") : "Unknown");
+    private static final String CLASS_PATH = (System.getProperty("java.class.path") != null ? System.getProperty("java.class.path") : "Unknown");
 
     public final static int MAJOR = 3;
     public final static int MINOR = 0;
@@ -170,31 +170,35 @@ public final class Emulator {
             Emulator.timeStarted = getIntUnixTimestamp();
 
             if (Emulator.getConfig().getInt("runtime.threads") < (Runtime.getRuntime().availableProcessors() * 2)) {
-                LOGGER.warn("Emulator settings runtime.threads ({}) can be increased to {} to possibly increase performance.",
+                LOGGER.warn("Emulator settings runtime.threads ({}) can be increased to ({}) to possibly increase performance.",
                         Emulator.getConfig().getInt("runtime.threads"),
                         Runtime.getRuntime().availableProcessors() * 2);
             }
 
-
             Emulator.getThreading().run(() -> {
             }, 1500);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            // Check if console mode is true or false, default is true
+            if (Emulator.getConfig().getBoolean("console.mode", true)) {
 
-            while (!isShuttingDown && isReady) {
-                try {
-                    String line = reader.readLine();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-                    if (line != null) {
-                        ConsoleCommand.handle(line);
-                    }
-                    System.out.println("Waiting for command: ");
-                } catch (Exception e) {
-                    if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
-                        LOGGER.error("Error while reading command", e);
+                while (!isShuttingDown && isReady) {
+                    try {
+                        String line = reader.readLine();
+
+                        if (line != null) {
+                            ConsoleCommand.handle(line);
+                        }
+                        System.out.println("Waiting for command: ");
+                    } catch (Exception e) {
+                        if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
+                            LOGGER.error("Error while reading command", e);
+                        }
                     }
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
