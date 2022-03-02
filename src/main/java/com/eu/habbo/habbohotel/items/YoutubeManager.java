@@ -47,9 +47,9 @@ public class YoutubeManager {
         private final String id;
         private final String name;
         private final String description;
-        private final ArrayList < YoutubeVideo > videos;
+        private final ArrayList<YoutubeVideo> videos;
 
-        YoutubePlaylist(String id, String name, String description, ArrayList < YoutubeVideo > videos) {
+        YoutubePlaylist(String id, String name, String description, ArrayList<YoutubeVideo> videos) {
             this.id = id;
             this.name = name;
             this.description = description;
@@ -68,13 +68,13 @@ public class YoutubeManager {
             return description;
         }
 
-        public ArrayList < YoutubeVideo > getVideos() {
+        public ArrayList<YoutubeVideo> getVideos() {
             return videos;
         }
     }
 
-    private final THashMap < Integer, ArrayList < YoutubePlaylist >> playlists = new THashMap < > ();
-    private final THashMap < String, YoutubePlaylist > playlistCache = new THashMap < > ();
+    private final THashMap<Integer, ArrayList<YoutubePlaylist>> playlists = new THashMap<>();
+    private final THashMap<String, YoutubePlaylist> playlistCache = new THashMap<>();
     private final String apiKey = Emulator.getConfig().getValue("youtube.apikey");
 
     public void load() {
@@ -95,7 +95,7 @@ public class YoutubeManager {
                         final String playlistId = set.getString("playlist_id");
 
                         youtubeDataLoaderPool.submit(() -> {
-                            ArrayList < YoutubePlaylist > playlists = this.playlists.getOrDefault(itemId, new ArrayList < > ());
+                            ArrayList<YoutubePlaylist> playlists = this.playlists.getOrDefault(itemId, new ArrayList<>());
 
                             YoutubePlaylist playlist;
 
@@ -225,11 +225,11 @@ public class YoutubeManager {
 
     }
 
-    public ArrayList < YoutubePlaylist > getPlaylistsForItemId(int itemId) {
+    public ArrayList<YoutubePlaylist> getPlaylistsForItemId(int itemId) {
         return this.playlists.get(itemId);
     }
 
     public void addPlaylistToItem(int itemId, YoutubePlaylist playlist) {
-        this.playlists.computeIfAbsent(itemId, k -> new ArrayList < > ()).add(playlist);
+        this.playlists.computeIfAbsent(itemId, k -> new ArrayList<>()).add(playlist);
     }
 }
