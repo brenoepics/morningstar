@@ -546,8 +546,7 @@ public class CatalogManager {
         }
 
         if (voucher.isExhausted()) {
-            Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher);
-            client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.TECHNICAL_ERROR));
+            client.sendResponse(new RedeemVoucherErrorComposer(Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher) ? RedeemVoucherErrorComposer.INVALID_CODE : RedeemVoucherErrorComposer.TECHNICAL_ERROR));
             return;
         }
 
