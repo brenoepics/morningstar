@@ -30,7 +30,7 @@ public class RoomUserActionEvent extends MessageHandler {
             int action = this.packet.readInt();
 
             //Check if the action is ' wave ', the setting is enabled and if is dancing
-            if (action == 1 && Emulator.getConfig().getBoolean("hotel.user_action.wave.stop_dance", false) && habbo.getRoomUnit().getDanceType() != DanceType.NONE) {
+            if (action == 1 && Emulator.getConfig().getBoolean("hotel.user_action.wave.stop_dance", true) && habbo.getRoomUnit().getDanceType() != DanceType.NONE) {
                 habbo.getRoomUnit().setDanceType(DanceType.NONE);
                 habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDanceComposer(habbo.getRoomUnit()).compose());
             }
