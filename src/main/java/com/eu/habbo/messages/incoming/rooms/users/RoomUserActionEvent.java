@@ -3,9 +3,11 @@ package com.eu.habbo.messages.incoming.rooms.users;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
+import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserActionComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
 import com.eu.habbo.plugin.events.users.UserIdleEvent;
 
 public class RoomUserActionEvent extends MessageHandler {
@@ -26,6 +28,12 @@ public class RoomUserActionEvent extends MessageHandler {
             }
 
             int action = this.packet.readInt();
+
+            //Check if the action is ' wave ', the setting is enabled and if is dancing
+            if (action == 1 && Emulator.getConfig().getBoolean("hotel.user_action.wave.stop_dance", false) && habbo.getRoomUnit().getDanceType() != DanceType.NONE) {
+                habbo.getRoomUnit().setDanceType(DanceType.NONE);
+                habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDanceComposer(habbo.getRoomUnit()).compose());
+            }
 
             if (action == 5) {
                 UserIdleEvent event = new UserIdleEvent(this.client.getHabbo(), UserIdleEvent.IdleReason.ACTION, true);
