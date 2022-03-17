@@ -59,7 +59,6 @@ public class SubscriptionHabboClub extends Subscription {
      * Called when the subscription is first created.
      * Actions:
      * - Set user's max_friends to MAXIMUM_FRIENDS_HC
-     * - Set user's max_rooms to MAXIMUM_ROOMS_HC
      * - Reset the user's HC pay day timer (used in calculating the coins spent)
      * - Send associated HC packets to client
      */
@@ -71,7 +70,6 @@ public class SubscriptionHabboClub extends Subscription {
         HabboStats stats = habboInfo.getHabboStats();
 
         stats.maxFriends = Messenger.MAXIMUM_FRIENDS_HC;
-        stats.maxRooms = RoomManager.MAXIMUM_ROOMS_HC;
         stats.lastHCPayday = HC_PAYDAY_COINSSPENT_RESET_ON_EXPIRE ? Emulator.getIntUnixTimestamp() : HC_PAYDAY_NEXT_DATE - Emulator.timeStringToSeconds(HC_PAYDAY_INTERVAL);
         Emulator.getThreading().run(stats);
 
@@ -137,7 +135,6 @@ public class SubscriptionHabboClub extends Subscription {
      * Called by SubscriptionScheduler when isActive() && getRemaining() < 0
      * Actions:
      * - Set user's max_friends to MAXIMUM_FRIENDS
-     * - Set user's max_rooms to MAXIMUM_ROOMS
      * - Remove HC clothing
      * - Send associated HC packets to client
      */
@@ -150,7 +147,6 @@ public class SubscriptionHabboClub extends Subscription {
         HabboStats stats = habboInfo.getHabboStats();
 
         stats.maxFriends = Messenger.MAXIMUM_FRIENDS;
-        stats.maxRooms = RoomManager.MAXIMUM_ROOMS_USER;
         Emulator.getThreading().run(stats);
 
         if (habbo != null && ClothingValidationManager.VALIDATE_ON_HC_EXPIRE) {
