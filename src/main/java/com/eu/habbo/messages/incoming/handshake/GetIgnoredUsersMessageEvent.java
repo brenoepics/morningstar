@@ -7,6 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.TargetedOfferComposer;
 import com.eu.habbo.messages.outgoing.events.calendar.AdventCalendarDataComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
+import com.eu.habbo.messages.outgoing.unknown.IgnoredUsersComposer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,9 +16,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
-public class UsernameEvent extends MessageHandler {
+public class GetIgnoredUsersMessageEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
+        this.client.sendResponse(new IgnoredUsersComposer());
+
         boolean calendar = false;
         if (!this.client.getHabbo().getHabboStats().getAchievementProgress().containsKey(Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"))) {
             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"));

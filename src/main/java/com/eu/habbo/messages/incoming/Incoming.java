@@ -112,7 +112,8 @@ public class Incoming {
     public static final int RoomSettingsSaveEvent = 1969;
     public static final int AcceptFriendRequest = 137;
     public static final int DeclineFriendRequest = 2890; //835; //TODO
-    public static final int ReleaseVersionEvent = 4000;//4000 
+    public static final int ReleaseVersionEvent = 4000;//4000
+    public final static int VersionCheckMessageEvent = 1053;
     public static final int InitDiffieHandshake = 3110;
     public static final int CompleteDiffieHandshake = 773;
     public static final int SearchRoomsMyFavoriteEvent = 2578;
@@ -210,7 +211,7 @@ public class Incoming {
     public static final int FloorPlanEditorSaveEvent = 875;
     public static final int FloorPlanEditorRequestDoorSettingsEvent = 3559;
     public static final int FloorPlanEditorRequestBlockedTilesEvent = 1687;
-    public static final int UnknownEvent1 = 1371;
+    public static final int GetBadgePointLimitsEvent = 1371;
     public static final int RequestTalenTrackEvent = 196;
     public static final int RequestNewNavigatorDataEvent = 2110;
     public static final int RequestNewNavigatorRoomsEvent = 249;
@@ -227,7 +228,7 @@ public class Incoming {
     public static final int MoodLightSaveSettingsEvent = 1648;
     public static final int ModToolRequestIssueChatlogEvent = 211;
     public static final int ModToolRequestRoomUserChatlogEvent = -1;
-    public static final int UsernameEvent = 3878;
+    public static final int GetIgnoredUsersMessageEvent = 3878;
     public static final int RequestClubGiftsEvent = 487;
     public static final int RentSpaceEvent = 2946;
     public static final int RentSpaceCancelEvent = 1667;
@@ -300,6 +301,7 @@ public class Incoming {
     public static final int UpdateUIFlagsEvent = 2313;
     public static final int ReportThreadEvent = 534;
     public static final int ReportCommentEvent = 1412;
+    public static final int FriendListUpdateMessageEvent = 1419;
     public static final int ReportPhotoEvent = 2492;
 
     public static final int RequestCraftingRecipesEvent = 1173;
@@ -401,4 +403,5 @@ public class Incoming {
     public static final int UNKNOWN_SNOWSTORM_6024 = 6024;
     public static final int UNKNOWN_SNOWSTORM_6025 = 6025;
     public static final int SnowStormUserPickSnowballEvent = 6026;
+    public static final int VotePollCounterMessageEvent = 6200;
 }

@@ -6,16 +6,19 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Map;
 
-public class UnknownRoomViewerComposer extends MessageComposer {
+public class BotSkillListUpdateComposer extends MessageComposer {
+    private final int unknownInt1;
     private final Map<Integer, String> unknownMap;
 
-    public UnknownRoomViewerComposer(Map<Integer, String> unknownMap) {
+    public BotSkillListUpdateComposer(int unknownInt1, Map<Integer, String> unknownMap) {
+        this.unknownInt1 = unknownInt1;
         this.unknownMap = unknownMap;
     }
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnknownRoomViewerComposer);
+        this.response.init(Outgoing.BotSkillListUpdateComposer);
+        this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.unknownMap.size());
         for (Map.Entry<Integer, String> entry : this.unknownMap.entrySet()) {
             this.response.appendInt(entry.getKey());

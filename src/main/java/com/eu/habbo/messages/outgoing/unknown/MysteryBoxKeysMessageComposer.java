@@ -4,11 +4,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUnknown3Composer extends MessageComposer {
+public class MysteryBoxKeysMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUnknown3Composer);
-        //Empty body
+        this.response.init(Outgoing.MysteryBoxKeysMessageComposer);
+        this.response.appendInt(0);
         return this.response;
     }
 }

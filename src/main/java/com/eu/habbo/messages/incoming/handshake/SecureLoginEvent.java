@@ -127,7 +127,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new EnableNotificationsComposer(Emulator.getConfig().getBoolean("bubblealerts.enabled", true)).compose());
                 messages.add(new UserAchievementScoreComposer(this.client.getHabbo()).compose());
                 messages.add(new IsFirstLoginOfDayComposer(true).compose());
-                messages.add(new UnknownComposer5().compose());
+                messages.add(new MysteryBoxKeysMessageComposer().compose());
                 messages.add(new BuildersClubExpiredComposer().compose());
                 messages.add(new CfhTopicsMessageComposer().compose());
                 messages.add(new FavoriteRoomsCountComposer(this.client.getHabbo()).compose());
