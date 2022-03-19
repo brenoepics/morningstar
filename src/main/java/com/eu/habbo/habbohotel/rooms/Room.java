@@ -30,6 +30,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.pets.RideablePet;
+import com.eu.habbo.habbohotel.polls.infobus.PollChoice;
 import com.eu.habbo.habbohotel.users.*;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -43,8 +44,10 @@ import com.eu.habbo.messages.outgoing.hotelview.HotelViewComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
-import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollAnswerComposer;
-import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollStartComposer;
+import com.eu.habbo.messages.outgoing.polls.SimplePollAnswerComposer;
+import com.eu.habbo.messages.outgoing.polls.SimplePollStartComposer;
+import com.eu.habbo.messages.outgoing.polls.infobus.RoomPollResultComposer;
+import com.eu.habbo.messages.outgoing.polls.infobus.StartRoomPollComposer;
 import com.eu.habbo.messages.outgoing.rooms.*;
 import com.eu.habbo.messages.outgoing.rooms.items.*;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
@@ -154,6 +157,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public int noVotes = 0;
     public int yesVotes = 0;
     public int wordQuizEnd = 0;
+    public String infobusPoll = "";
+    public final List<Integer> infobusPollVotes;
+    public ArrayList<PollChoice> infobusPollChoices;
+    public boolean infobusPollRunning = false;
     public ScheduledFuture roomCycleTask;
     private int id;
     private int ownerId;
@@ -299,6 +306,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.activeTrades = new THashSet<>(0);
         this.rights = new TIntArrayList();
         this.userVotes = new ArrayList<>();
+        this.infobusPollVotes = new ArrayList<>();
     }
 
     public synchronized void loadData() {
@@ -4377,6 +4385,41 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 LOGGER.error("Caught SQL exception", e);
             }
         }
+    }
+
+    public void handleInfobusPoll(Habbo habbo, Integer choiceId) {
+        synchronized (this.infobusPollVotes) {
+            if (this.infobusPollRunning && !this.infobusPollChoices.isEmpty() && !this.hasVotedInInfobusPoll(habbo)) {
+
+                PollChoice choice = this.infobusPollChoices.stream().filter(option -> choiceId == option.getId()).findAny().orElse(null);
+
+                if(choice == null) { return; }
+
+                choice.setVotes(choice.getVotes() + 1);
+                this.infobusPollVotes.add(habbo.getHabboInfo().getId());
+            }
+        }
+    }
+
+    public void startInfobusPoll(String question, ArrayList<PollChoice> choices){
+        if(!this.infobusPollRunning) {
+            this.infobusPoll = question;
+            this.infobusPollChoices = choices;
+            this.infobusPollVotes.clear();
+            this.infobusPollRunning = true;
+            this.sendComposer(new StartRoomPollComposer(question, choices).compose());
+            Emulator.getThreading().run(() -> {
+                this.sendComposer(new RoomPollResultComposer(this.infobusPoll, this.infobusPollChoices, this.infobusPollVotes.size()).compose());
+                this.infobusPollRunning = false;
+                this.infobusPoll = "";
+                this.infobusPollChoices = null;
+                this.infobusPollVotes.clear();
+            }, 30000);
+        }
+    }
+
+    public boolean hasVotedInInfobusPoll(Habbo habbo) {
+        return this.infobusPollVotes.contains(habbo.getHabboInfo().getId());
     }
 
     public void handleWordQuiz(Habbo habbo, String answer) {
