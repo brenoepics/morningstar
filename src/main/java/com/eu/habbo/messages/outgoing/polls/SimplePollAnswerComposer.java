@@ -1,4 +1,4 @@
-package com.eu.habbo.messages.outgoing.polls.infobus;
+package com.eu.habbo.messages.outgoing.polls;
 
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
