@@ -42,6 +42,7 @@ import com.eu.habbo.messages.incoming.navigator.*;
 import com.eu.habbo.messages.incoming.polls.AnswerPollEvent;
 import com.eu.habbo.messages.incoming.polls.CancelPollEvent;
 import com.eu.habbo.messages.incoming.polls.GetPollDataEvent;
+import com.eu.habbo.messages.incoming.polls.infobus.VotePollCounterMessageEvent;
 import com.eu.habbo.messages.incoming.rooms.*;
 import com.eu.habbo.messages.incoming.rooms.bots.BotPickupEvent;
 import com.eu.habbo.messages.incoming.rooms.bots.BotPlaceEvent;
@@ -62,7 +63,7 @@ import com.eu.habbo.messages.incoming.rooms.promotions.UpdateRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.rooms.users.*;
 import com.eu.habbo.messages.incoming.trading.*;
 import com.eu.habbo.messages.incoming.unknown.RequestResolutionEvent;
-import com.eu.habbo.messages.incoming.unknown.UnknownEvent1;
+import com.eu.habbo.messages.incoming.unknown.GetBadgePointLimitsEvent;
 import com.eu.habbo.messages.incoming.users.*;
 import com.eu.habbo.messages.incoming.wired.WiredApplySetConditionsEvent;
 import com.eu.habbo.messages.incoming.wired.WiredConditionSaveDataEvent;
@@ -269,11 +270,12 @@ public class PacketManager {
 
     private void registerHandshake() throws Exception {
         this.registerHandler(Incoming.ReleaseVersionEvent, ReleaseVersionEvent.class);
+        this.registerHandler(Incoming.VersionCheckMessageEvent, VersionCheckMessageEvent.class);
         this.registerHandler(Incoming.InitDiffieHandshake, InitDiffieHandshakeEvent.class);
         this.registerHandler(Incoming.CompleteDiffieHandshake, CompleteDiffieHandshakeEvent.class);
         this.registerHandler(Incoming.SecureLoginEvent, SecureLoginEvent.class);
         this.registerHandler(Incoming.MachineIDEvent, MachineIDEvent.class);
-        this.registerHandler(Incoming.UsernameEvent, UsernameEvent.class);
+        this.registerHandler(Incoming.GetIgnoredUsersMessageEvent, GetIgnoredUsersMessageEvent.class);
         this.registerHandler(Incoming.PingEvent, PingEvent.class);
     }
 
@@ -291,6 +293,7 @@ public class PacketManager {
         this.registerHandler(Incoming.RequestInitFriendsEvent, RequestInitFriendsEvent.class);
         this.registerHandler(Incoming.FindNewFriendsEvent, FindNewFriendsEvent.class);
         this.registerHandler(Incoming.InviteFriendsEvent, InviteFriendsEvent.class);
+        this.registerHandler(Incoming.FriendListUpdateMessageEvent, FriendListUpdateMessageEvent.class);
     }
 
     private void registerUsers() throws Exception {
@@ -469,6 +472,7 @@ public class PacketManager {
         this.registerHandler(Incoming.CancelPollEvent, CancelPollEvent.class);
         this.registerHandler(Incoming.GetPollDataEvent, GetPollDataEvent.class);
         this.registerHandler(Incoming.AnswerPollEvent, AnswerPollEvent.class);
+        this.registerHandler(Incoming.VotePollCounterMessageEvent, VotePollCounterMessageEvent.class);
     }
 
     void registerModTool() throws Exception {
@@ -586,7 +590,7 @@ public class PacketManager {
     void registerUnknown() throws Exception {
         this.registerHandler(Incoming.RequestResolutionEvent, RequestResolutionEvent.class);
         this.registerHandler(Incoming.RequestTalenTrackEvent, RequestTalentTrackEvent.class);
-        this.registerHandler(Incoming.UnknownEvent1, UnknownEvent1.class);
+        this.registerHandler(Incoming.GetBadgePointLimitsEvent, GetBadgePointLimitsEvent.class);
         this.registerHandler(Incoming.MySanctionStatusEvent, MySanctionStatusEvent.class);
     }
 
