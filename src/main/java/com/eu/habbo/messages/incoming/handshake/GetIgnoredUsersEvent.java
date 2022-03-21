@@ -15,19 +15,20 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
-public class UsernameEvent extends MessageHandler {
+public class GetIgnoredUsersEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
+        // todo: move this logic elsewhere, it doesn't belong on the handler for this packet
+        // todo: send ignored users list to the client
         boolean calendar = false;
         if (!this.client.getHabbo().getHabboStats().getAchievementProgress().containsKey(Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"))) {
             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"));
             calendar = true;
         } else {
+            int previousOnline = (int)this.client.getHabbo().getHabboStats().cache.get("previousOnline");
+            long daysBetween = ChronoUnit.DAYS.between(new Date((long) previousOnline * 1000L).toInstant(), new Date().toInstant());
 
-            long daysBetween = ChronoUnit.DAYS.between(new Date((long) this.client.getHabbo().getHabboInfo().getLastOnline() * 1000L).toInstant(), new Date().toInstant());
-
-
-            Date lastLogin = new Date(this.client.getHabbo().getHabboInfo().getLastOnline());
+            Date lastLogin = new Date(previousOnline);
             Calendar c1 = Calendar.getInstance();
             c1.add(Calendar.DAY_OF_YEAR, -1);
 
@@ -95,7 +96,5 @@ public class UsernameEvent extends MessageHandler {
                 this.client.sendResponse(new TargetedOfferComposer(this.client.getHabbo(), offer));
             }
         }
-
-        this.client.getHabbo().getHabboInfo().setLastOnline(Emulator.getIntUnixTimestamp());
     }
 }
