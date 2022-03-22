@@ -290,7 +290,7 @@ public class RoomLayout {
 
                 if (roomUnit.canOverrideTile(currentAdj)) {
                     currentAdj.setPrevious(current);
-                    currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
+                    currentAdj.sethCosts(Objects.requireNonNull(this.findTile(openList, newTile.x, newTile.y)));
                     currentAdj.setgCosts(current);
                     openList.add(currentAdj);
                     continue;
@@ -318,7 +318,7 @@ public class RoomLayout {
 
                 if (!openList.contains(currentAdj)) {
                     currentAdj.setPrevious(current);
-                    currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
+                    currentAdj.sethCosts(Objects.requireNonNull(this.findTile(openList, newTile.x, newTile.y)));
                     currentAdj.setgCosts(current);
                     openList.add(currentAdj);
                 } else if (currentAdj.getgCosts() > currentAdj.calculategCosts(current)) {
