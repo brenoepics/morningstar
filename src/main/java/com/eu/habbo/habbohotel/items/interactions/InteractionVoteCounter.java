@@ -81,7 +81,9 @@ public class InteractionVoteCounter extends HabboItem {
 
         updateExtradata();
         this.needsUpdate(true);
-        room.updateItem(this);
+        if (room != null) {
+            room.updateItem(this);
+        }
     }
 
     @Override
