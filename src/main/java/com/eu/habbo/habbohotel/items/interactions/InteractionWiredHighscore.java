@@ -91,7 +91,9 @@ public class InteractionWiredHighscore extends HabboItem {
         try {
             int state = Integer.valueOf(this.getExtradata());
             this.setExtradata(Math.abs(state - 1) + "");
-            room.updateItem(this);
+            if (room != null) {
+                room.updateItem(this);
+            }
         } catch (Exception e) {
             LOGGER.error("Caught exception", e);
         }
