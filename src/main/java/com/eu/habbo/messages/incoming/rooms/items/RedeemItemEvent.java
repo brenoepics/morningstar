@@ -71,17 +71,31 @@ public class RedeemItemEvent extends MessageHandler {
                         }
 
                         furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), points, pointsType);
+
                     } else if (item.getBaseItem().getName().startsWith("CF_diamond_")) {
-                        int points;
+                        if (Emulator.getConfig().getBoolean("cf_diamond.credits")) {
+                            int credits;
 
-                        try {
-                            points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
-                        } catch (Exception e) {
-                            LOGGER.error("Failed to parse redeemable diamonds furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
-                            return;
+                            try {
+                                credits = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
+                            } catch (Exception e) {
+                                LOGGER.error("Failed to parse redeemable credits furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
+                                return;
+                            }
+
+                            furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), credits, FurnitureRedeemedEvent.CREDITS);
+                        } else {
+                            int points;
+
+                            try {
+                                points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
+                            } catch (Exception e) {
+                                LOGGER.error("Failed to parse redeemable diamonds furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
+                                return;
+                            }
+
+                            furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), points, FurnitureRedeemedEvent.DIAMONDS);
                         }
-
-                        furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), points, FurnitureRedeemedEvent.DIAMONDS);
                     }
 
                     if (furnitureRedeemEventRegistered) {
