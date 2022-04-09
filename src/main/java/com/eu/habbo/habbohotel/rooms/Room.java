@@ -2407,6 +2407,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionMuteArea) {
                 this.roomSpecialTypes.addUndefined(item);
+            } else if (item instanceof InteractionBuildArea) {
+                this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionTagPole) {
                 this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionTagField) {
@@ -3962,7 +3964,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return;
 
         this.sendComposer(new RoomRemoveRightsListComposer(this, userId).compose());
-
+        
         if (this.rights.remove(userId)) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM room_rights WHERE room_id = ? AND user_id = ?")) {
                 statement.setInt(1, this.id);
@@ -3974,6 +3976,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (habbo != null) {
+            this.ejectUserFurni(habbo.getHabboInfo().getId());
             habbo.getRoomUnit().setRightsLevel(RoomRightLevels.NONE);
             habbo.getRoomUnit().removeStatus(RoomUnitStatus.FLAT_CONTROL);
             this.refreshRightsForHabbo(habbo);
@@ -3981,6 +3984,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void removeAllRights() {
+        for (int userId : rights.toArray()) {
+            this.ejectUserFurni(userId);
+        }
+
         this.rights.clear();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM room_rights WHERE room_id = ?")) {
@@ -4479,6 +4486,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 } else {
                     return FurnitureMovementError.NONE;
                 }
+            }
+        }
+
+        for (HabboItem area : this.getRoomSpecialTypes().getItemsOfType(InteractionBuildArea.class)) {
+            if (((InteractionBuildArea) area).inSquare(tile) && ((InteractionBuildArea) area).isBuilder(habbo.getHabboInfo().getUsername())) {
+                    return FurnitureMovementError.NONE;
             }
         }
 
