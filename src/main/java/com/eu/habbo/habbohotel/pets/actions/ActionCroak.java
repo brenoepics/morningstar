@@ -30,7 +30,10 @@ public class ActionCroak extends PetAction {
         } else if (pet.getHappyness() > 40 && pet.getHappyness() < 60) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
             return true;
-        } else if (pet.getHappyness() < 40) {
+        } else if (pet.getHappyness() > 20 && pet.getHappyness() < 40) {
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_SAD));
+            return true;
+        } else if (pet.getHappyness() < 20) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
         }
 
