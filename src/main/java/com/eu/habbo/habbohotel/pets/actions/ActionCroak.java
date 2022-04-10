@@ -21,22 +21,19 @@ public class ActionCroak extends PetAction {
 
         Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.CROAK, null, false), 2000);
 
-        if (pet.getHappyness() > 80) {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
-            return true;
-        } else if (pet.getHappyness() > 60 && pet.getHappyness() < 80) {
+        if (pet.getHappyness() > 70)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_HAPPY));
-            return true;
-        } else if (pet.getHappyness() > 40 && pet.getHappyness() < 60) {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
-            return true;
-        } else if (pet.getHappyness() > 20 && pet.getHappyness() < 40) {
+        else if (pet.getHappyness() < 30)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_SAD));
-            return true;
-        } else if (pet.getHappyness() < 20) {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-        }
+        else if (pet.getLevelHunger() > 65)
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.HUNGRY));
+        else if (pet.getLevelThirst() > 65)
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.THIRSTY));
+        else if (pet.getEnergy() < 25)
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.TIRED));
+        else if (pet.getTask() == PetTasks.NEST || pet.getTask() == PetTasks.DOWN)
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.SLEEPING));
 
-        return false;
+        return true;
     }
 }
