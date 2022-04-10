@@ -21,9 +21,19 @@ public class ActionCroak extends PetAction {
 
         Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.CROAK, null, false), 2000);
 
-        if (pet.getHappyness() > 80)
+        if (pet.getHappyness() > 80) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
+            return true;
+        } else if (pet.getHappyness() > 60 && pet.getHappyness() < 80) {
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_HAPPY));
+            return true;
+        } else if (pet.getHappyness() > 40 && pet.getHappyness() < 60) {
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
+            return true;
+        } else if (pet.getHappyness() < 40) {
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
+        }
 
-        return true;
+        return false;
     }
 }
