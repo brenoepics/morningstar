@@ -945,7 +945,11 @@ public class RoomManager {
                 AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000));
             }
 
-            habbo.getMessenger().connectionChanged(habbo, habbo.isOnline(), false);
+             if(habbo.getHabboStats().cache.get("SWIM_ENABLE") != null)  {
+                habbo.getHabboStats().cache.remove("SWIM_ENABLE");
+            }
+
+            habbo.getMessenger().connectionChanged(habbo, habbo.isOnline(), false);      
         }
     }
 
