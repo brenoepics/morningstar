@@ -72,6 +72,16 @@ public class InteractionWater extends InteractionDefault {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
+        Habbo habbo = room.getHabbo(roomUnit);
+
+        if(habbo == null) return;
+
+        habbo.getRoomUnit().setStatus(RoomUnitStatus.SWIM, "");
+
+        if(habbo.getRoomUnit().getEffectId() != 0 && habbo.getRoomUnit().getEffectId() != 28) {
+            habbo.getHabboStats().cache.put("SWIM_ENABLE", habbo.getRoomUnit().getEffectId());
+        }
+
         Pet pet = room.getPet(roomUnit);
 
         if(pet == null)
@@ -85,6 +95,15 @@ public class InteractionWater extends InteractionDefault {
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
+
+        Habbo habbo = room.getHabbo(roomUnit);
+
+        if(habbo == null) return;
+
+        habbo.getRoomUnit().removeStatus(RoomUnitStatus.SWIM);
+        if(habbo.getHabboStats().cache.containsKey("SWIM_ENABLE")) {
+            room.giveEffect(habbo, Integer.parseInt(habbo.getHabboStats().cache.get ("SWIM_ENABLE").toString()), -1);
+        }
 
         Pet pet = room.getPet(roomUnit);
 

@@ -4120,15 +4120,32 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void giveEffect(RoomUnit roomUnit, int effectId, int duration) {
-        if (duration == -1 || duration == Integer.MAX_VALUE) {
-            duration = Integer.MAX_VALUE;
-        } else {
-            duration += Emulator.getIntUnixTimestamp();
+       if(roomUnit == null) return;
+
+        Habbo habbo = roomUnit.getRoom().getHabbo(roomUnit);
+
+        if(habbo == null) return;
+
+       if(effectId != 0 && effectId != 28) {
+           if(habbo.getRoomUnit().hasStatus(RoomUnitStatus.SWIM)) {
+               habbo.getHabboStats().cache.put("SWIM_ENABLE", effectId);
+               return;
+           } else {
+               habbo.getHabboStats().cache.put("SWIM_ENABLE", effectId);
+           }
         }
 
-        if (this.allowEffects && roomUnit != null) {
-            roomUnit.setEffectId(effectId, duration);
-            this.sendComposer(new RoomUserEffectComposer(roomUnit).compose());
+        if (!habbo.getHabboInfo().isInGame()) {
+            if (duration == -1 || duration == Integer.MAX_VALUE) {
+                duration = Integer.MAX_VALUE;
+            } else {
+                duration += Emulator.getIntUnixTimestamp();
+            }
+
+            if (this.allowEffects) {
+                roomUnit.setEffectId(effectId, duration);
+                this.sendComposer(new RoomUserEffectComposer(roomUnit).compose());
+            }
         }
     }
 
