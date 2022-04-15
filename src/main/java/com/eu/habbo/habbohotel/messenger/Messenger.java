@@ -207,6 +207,23 @@ public class Messenger {
         }
     }
 
+    public static boolean friendRequested(int userFrom, int userTo) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM messenger_friendrequests WHERE user_to_id = ? AND user_from_id = ? LIMIT 1")) {
+            statement.setInt(1, userFrom);
+            statement.setInt(2, userTo);
+
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+
+        return false;
+    }
+
     public void removeBuddy(int id) {
         this.friends.remove(id);
     }
