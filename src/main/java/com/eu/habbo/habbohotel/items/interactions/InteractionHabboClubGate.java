@@ -26,8 +26,9 @@ public class InteractionHabboClubGate extends InteractionDefault implements Cond
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {

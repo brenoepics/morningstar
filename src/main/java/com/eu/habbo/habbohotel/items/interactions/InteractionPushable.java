@@ -32,8 +32,9 @@ public abstract class InteractionPushable extends InteractionDefault {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public void onWalkOff(RoomUnit roomUnit, final Room room, Object[] objects) throws Exception {

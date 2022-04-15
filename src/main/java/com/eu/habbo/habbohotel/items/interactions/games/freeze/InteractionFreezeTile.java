@@ -33,8 +33,9 @@ public class InteractionFreezeTile extends HabboItem {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {

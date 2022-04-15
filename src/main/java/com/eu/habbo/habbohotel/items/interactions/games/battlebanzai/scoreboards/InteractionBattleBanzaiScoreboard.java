@@ -25,8 +25,9 @@ public class InteractionBattleBanzaiScoreboard extends InteractionGameScoreboard
 
     @Override
     public boolean isWalkable() {
-        return false;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {

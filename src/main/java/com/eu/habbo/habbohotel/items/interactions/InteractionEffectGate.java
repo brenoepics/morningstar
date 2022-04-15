@@ -38,8 +38,9 @@ public class InteractionEffectGate extends InteractionDefault implements Conditi
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {

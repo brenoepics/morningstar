@@ -38,8 +38,9 @@ public class InteractionPetBreedingNest extends HabboItem {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 
 
     @Override

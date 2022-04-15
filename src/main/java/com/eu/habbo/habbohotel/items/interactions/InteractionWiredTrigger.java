@@ -30,8 +30,9 @@ public abstract class InteractionWiredTrigger extends InteractionWired {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {

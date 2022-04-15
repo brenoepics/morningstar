@@ -34,8 +34,9 @@ public class InteractionJukeBox extends HabboItem {
 
     @Override
     public boolean isWalkable() {
-        return false;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
