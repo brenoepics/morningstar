@@ -511,6 +511,11 @@ public class RoomManager {
             }
         }
 
+        if(habbo.getHabboStats().cache.get("SWIM_ENABLE") != null)  {
+            habbo.getHabboStats().cache.put("SWIM_ENABLE", 0);
+        }
+
+
         if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission(Permission.ACC_ENTERANYROOM)) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             return;
@@ -945,7 +950,11 @@ public class RoomManager {
                 AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000));
             }
 
-            habbo.getMessenger().connectionChanged(habbo, habbo.isOnline(), false);
+             if(habbo.getHabboStats().cache.get("SWIM_ENABLE") != null)  {
+                habbo.getHabboStats().cache.remove("SWIM_ENABLE");
+            }
+
+            habbo.getMessenger().connectionChanged(habbo, habbo.isOnline(), false);      
         }
     }
 

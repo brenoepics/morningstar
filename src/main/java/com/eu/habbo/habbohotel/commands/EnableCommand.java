@@ -39,6 +39,10 @@ public class EnableCommand extends Command {
                                     return true;
                                 }
 
+                                 if(target.getHabboStats().cache.containsKey("SWIM_ENABLE")) {
+                                    target.getHabboStats().cache.put("SWIM_ENABLE", effectId);
+                                }
+
                                 target.getHabboInfo().getCurrentRoom().giveEffect(target, effectId, -1);
                             }
                         }
