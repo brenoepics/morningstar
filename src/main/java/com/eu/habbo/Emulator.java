@@ -455,6 +455,10 @@ public final class Emulator {
         return res;
     }
 
+    public static Logging getLogging() {
+        return logging;
+    }
+
     public static Timestamp dateToTimeStamp(Date date) {
         return new Timestamp(date.getTime());
     }
