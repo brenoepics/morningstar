@@ -511,6 +511,11 @@ public class RoomManager {
             }
         }
 
+        if(habbo.getHabboStats().cache.get("SWIM_ENABLE") != null)  {
+            habbo.getHabboStats().cache.put("SWIM_ENABLE", 0);
+        }
+
+
         if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission(Permission.ACC_ENTERANYROOM)) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             return;
