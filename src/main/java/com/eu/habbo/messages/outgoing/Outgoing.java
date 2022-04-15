@@ -49,7 +49,7 @@ public class Outgoing {
     public final static int RoomUserTypingComposer = 1717;
     public final static int GuildJoinErrorComposer = 762;
     public final static int RoomCategoriesComposer = 1562;
-    public final static int InventoryAchievementsComposer = 2501;
+    public final static int BadgePointLimitsComposer = 2501;
     public final static int MarketplaceItemInfoComposer = 725;
     public final static int RoomRelativeMapComposer = 2753;
     public final static int ModToolComposerTwo = 2335;
