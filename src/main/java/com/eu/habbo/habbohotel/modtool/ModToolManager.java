@@ -513,7 +513,6 @@ public class ModToolManager {
         return ban;
     }
 
-    @Deprecated
     public boolean hasIPBan(Channel habbo) {
         if (habbo == null)
             return false;

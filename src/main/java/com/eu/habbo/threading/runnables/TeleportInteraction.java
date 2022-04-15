@@ -24,7 +24,6 @@ class TeleportInteraction extends Thread {
     private Room targetRoom;
     private HabboItem teleportTwo;
 
-    @Deprecated
     public TeleportInteraction(Room room, GameClient client, HabboItem teleportOne) {
         this.room = room;
         this.client = client;

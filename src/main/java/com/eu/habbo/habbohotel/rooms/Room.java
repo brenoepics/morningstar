@@ -3902,14 +3902,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return RoomRightLevels.NONE;
     }
 
-    /**
-     * @deprecated Deprecated since 2.5.0. Use {@link #getGuildRightLevel(Habbo)} instead.
-     */
-    @Deprecated
-    public int guildRightLevel(Habbo habbo) {
-        return this.getGuildRightLevel(habbo).level;
-    }
-
     public boolean isOwner(Habbo habbo) {
         return habbo.getHabboInfo().getId() == this.ownerId || habbo.hasPermission(Permission.ACC_ANYROOMOWNER);
     }

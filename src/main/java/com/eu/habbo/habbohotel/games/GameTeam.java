@@ -12,13 +12,11 @@ public class GameTeam {
     private final THashSet<GamePlayer> members;
     private int teamScore;
 
-
     public GameTeam(GameTeamColors teamColor) {
         this.teamColor = teamColor;
 
         this.members = new THashSet<>();
     }
-
 
     public void initialise() {
         for (GamePlayer player : this.members) {
@@ -28,21 +26,17 @@ public class GameTeam {
         this.teamScore = 0;
     }
 
-
     public void reset() {
         this.members.clear();
     }
-
 
     public void addTeamScore(int teamScore) {
         this.teamScore += teamScore;
     }
 
-
     public int getTeamScore() {
         return this.teamScore;
     }
-
 
     public synchronized int getTotalScore() {
         int score = this.teamScore;
@@ -54,13 +48,11 @@ public class GameTeam {
         return score;
     }
 
-
     public void addMember(GamePlayer gamePlayer) {
         synchronized (this.members) {
             this.members.add(gamePlayer);
         }
     }
-
 
     public void removeMember(GamePlayer gamePlayer) {
         synchronized (this.members) {
@@ -90,11 +82,9 @@ public class GameTeam {
         this.teamScore = 0;
     }
 
-
     public THashSet<GamePlayer> getMembers() {
         return this.members;
     }
-
 
     public boolean isMember(Habbo habbo) {
         for (GamePlayer p : this.members) {
@@ -106,8 +96,6 @@ public class GameTeam {
         return false;
     }
 
-
-    @Deprecated
     public GamePlayer getPlayerForHabbo(Habbo habbo) {
         for (GamePlayer p : this.members) {
             if (p.getHabbo().equals(habbo)) {

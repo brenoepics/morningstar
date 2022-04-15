@@ -65,59 +65,6 @@ public class Messenger {
         return users;
     }
 
-    /**
-     * @deprecated
-     * This method is no longer used and is only kept to avoid breaking any plugins
-     */
-    @Deprecated
-    public static boolean canFriendRequest(Habbo habbo, String friend) {
-        Habbo user = Emulator.getGameEnvironment().getHabboManager().getHabbo(friend);
-        HabboInfo habboInfo;
-
-        if (user != null) {
-            habboInfo = user.getHabboInfo();
-        } else {
-            habboInfo = HabboManager.getOfflineHabboInfo(friend);
-        }
-
-        if (habboInfo == null) {
-            return false;
-        }
-
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM messenger_friendrequests WHERE (user_to_id = ? AND user_from_id = ?) OR (user_to_id = ? AND user_from_id = ?) LIMIT 1")) {
-            statement.setInt(1, habbo.getHabboInfo().getId());
-            statement.setInt(2, habboInfo.getId());
-            statement.setInt(3, habboInfo.getId());
-            statement.setInt(4, habbo.getHabboInfo().getId());
-            try (ResultSet set = statement.executeQuery()) {
-                if (!set.next()) {
-                    return true;
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
-
-        return false;
-    }
-
-    public static boolean friendRequested(int userFrom, int userTo) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM messenger_friendrequests WHERE user_to_id = ? AND user_from_id = ? LIMIT 1")) {
-            statement.setInt(1, userFrom);
-            statement.setInt(2, userTo);
-
-            try (ResultSet set = statement.executeQuery()) {
-                if (set.next()) {
-                    return true;
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
-
-        return false;
-    }
-
     public static void makeFriendRequest(int userFrom, int userTo) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO messenger_friendrequests (user_to_id, user_from_id) VALUES (?, ?)")) {
             statement.setInt(1, userTo);

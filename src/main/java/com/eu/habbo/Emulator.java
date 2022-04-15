@@ -335,14 +335,6 @@ public final class Emulator {
         return rconServer;
     }
 
-    /**
-     * @deprecated Do not use. Please use LoggerFactory.getLogger(YourClass.class) to log.
-     */
-    @Deprecated
-    public static Logging getLogging() {
-        return logging;
-    }
-
     public static ThreadPooling getThreading() {
         return threading;
     }
