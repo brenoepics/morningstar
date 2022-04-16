@@ -5,13 +5,13 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.achievements.AchievementProgressComposer;
+import com.eu.habbo.messages.outgoing.achievements.AchievementComposer;
 import com.eu.habbo.messages.outgoing.achievements.AchievementUnlockedComposer;
 import com.eu.habbo.messages.outgoing.achievements.talenttrack.TalentLevelUpdateComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
-import com.eu.habbo.messages.outgoing.users.AddUserBadgeComposer;
+import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.users.UserBadgesComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.users.achievements.UserAchievementLeveledEvent;
@@ -119,7 +119,7 @@ public class AchievementManager {
 
         if (newLevel == null ||
                 (oldLevel != null && (oldLevel.level == newLevel.level && newLevel.level < achievement.levels.size()))) {
-            habbo.getClient().sendResponse(new AchievementProgressComposer(habbo, achievement));
+            habbo.getClient().sendResponse(new AchievementComposer(habbo, achievement));
         } else {
             if (Emulator.getPluginManager().isRegistered(UserAchievementLeveledEvent.class, true)) {
                 Event userAchievementLeveledEvent = new UserAchievementLeveledEvent(habbo, achievement, oldLevel, newLevel);
@@ -129,7 +129,7 @@ public class AchievementManager {
                     return;
             }
 
-            habbo.getClient().sendResponse(new AchievementProgressComposer(habbo, achievement));
+            habbo.getClient().sendResponse(new AchievementComposer(habbo, achievement));
             habbo.getClient().sendResponse(new AchievementUnlockedComposer(habbo, achievement));
 
             //Exception could possibly arise when the user disconnects while being in tour.
@@ -152,7 +152,7 @@ public class AchievementManager {
                 badge.needsUpdate(true);
             } else {
                 badge = new HabboBadge(0, "ACH_" + achievement.name + newLevel.level, 0, habbo);
-                habbo.getClient().sendResponse(new AddUserBadgeComposer(badge));
+                habbo.getClient().sendResponse(new BadgeReceivedComposer(badge));
                 badge.needsInsert(true);
                 badge.needsUpdate(true);
                 habbo.getInventory().getBadgesComponent().addBadge(badge);
@@ -362,7 +362,7 @@ public class AchievementManager {
                                     HabboBadge b = new HabboBadge(0, badge, 0, habbo);
                                     Emulator.getThreading().run(b);
                                     habbo.getInventory().getBadgesComponent().addBadge(b);
-                                    habbo.getClient().sendResponse(new AddUserBadgeComposer(b));
+                                    habbo.getClient().sendResponse(new BadgeReceivedComposer(b));
                                 }
                             }
                         }
