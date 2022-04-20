@@ -21,11 +21,14 @@ public class AnswerPollEvent extends MessageHandler {
         int pollId = this.packet.readInt();
         int questionId = this.packet.readInt();
         int count = this.packet.readInt();
-
+        String answers = this.packet.readString();
+        
         StringBuilder answer = new StringBuilder();
         for (int i = 0; i < count; i++) {
-            answer.append(":").append(this.packet.readString());
+            answer.append(":").append(answers);
         }
+
+        if(answer.length() <= 0) return;
 
         if (pollId == 0 && questionId <= 0) {
             this.client.getHabbo().getHabboInfo().getCurrentRoom().handleWordQuiz(this.client.getHabbo(), answer.toString());
@@ -49,7 +52,7 @@ public class AnswerPollEvent extends MessageHandler {
 
             if (poll.lastQuestionId == questionId) {
                 if (poll.badgeReward.length() > 0) {
-                    if (this.client.getHabbo().getInventory().getBadgesComponent().getBadge(poll.badgeReward) == null) {
+                    if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(poll.badgeReward)) {
                         HabboBadge badge = new HabboBadge(0, poll.badgeReward, 0, this.client.getHabbo());
                         Emulator.getThreading().run(badge);
                         this.client.getHabbo().getInventory().getBadgesComponent().addBadge(badge);
