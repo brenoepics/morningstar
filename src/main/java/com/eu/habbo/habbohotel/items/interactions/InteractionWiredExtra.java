@@ -33,6 +33,7 @@ public abstract class InteractionWiredExtra extends InteractionWired {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 }

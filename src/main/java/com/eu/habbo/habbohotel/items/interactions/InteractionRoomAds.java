@@ -46,6 +46,7 @@ public class InteractionRoomAds extends InteractionCustomValues {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 }

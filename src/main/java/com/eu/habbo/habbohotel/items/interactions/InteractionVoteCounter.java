@@ -60,8 +60,9 @@ public class InteractionVoteCounter extends HabboItem {
 
     @Override
     public boolean isWalkable() {
-        return false;
+        return this.getBaseItem().allowWalk();
     }
+
 
     private void updateExtradata() {
         this.setExtradata((this.frozen ? "1" : "0") + "," + this.votes);

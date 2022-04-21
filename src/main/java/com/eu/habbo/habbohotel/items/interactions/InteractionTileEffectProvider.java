@@ -31,8 +31,9 @@ public class InteractionTileEffectProvider extends InteractionCustomValues {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, final Room room, Object[] objects) throws Exception {

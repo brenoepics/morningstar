@@ -71,8 +71,9 @@ public class InteractionWiredHighscore extends HabboItem {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
+
 
     @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {

@@ -43,8 +43,9 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
 
     @Override
     public boolean isWalkable() {
-        return false;
+        return this.getBaseItem().allowWalk();
     }
+
 
 
     public int changeScore(int amount) {
