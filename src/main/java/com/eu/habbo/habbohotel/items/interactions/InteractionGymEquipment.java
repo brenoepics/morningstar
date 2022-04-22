@@ -56,7 +56,10 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
+        if(roomUnit == null) return;
+
        Habbo habbo = room.getHabbo(roomUnit);
+       
         if(habbo == null) return;
 
         room.giveEffect(habbo, 0, -1);
