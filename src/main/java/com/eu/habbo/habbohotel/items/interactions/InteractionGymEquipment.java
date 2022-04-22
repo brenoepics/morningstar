@@ -55,10 +55,14 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
-        room.giveEffect(roomUnit, 0, -1);
+
+       Habbo habbo = room.getHabbo(roomUnit);
+        if(habbo == null) return;
+
+        room.giveEffect(habbo, 0, -1);
 
         if (this.forceRotation()) {
-            roomUnit.canRotate = true;
+            habbo.getRoomUnit().canRotate = true;
         }
 
         this.reset(room);
