@@ -58,10 +58,13 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
 
         if(roomUnit == null) return;
 
-       Habbo habbo = room.getHabbo(roomUnit);
-       
-        if(habbo == null) return;
-        room.giveEffect(habbo, 0, -1);
+        if (roomUnit.getRoomUnitType() == RoomUnitType.USER) {
+            Habbo habbo = room.getHabbo(roomUnit);
+            if(habbo != null) room.giveEffect(habbo, 0, -1);
+        } else if(roomUnit.getRoomUnitType() == RoomUnitType.BOT) {
+            Bot bot = room.getBot(roomUnit);
+            if(bot != null) room.giveEffect(roomUnit, 0, -1);
+        }
 
         if (this.forceRotation()) {
             roomUnit.canRotate = true;
