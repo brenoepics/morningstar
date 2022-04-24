@@ -14,16 +14,16 @@ public class ChangeNameCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
 
         // check if there are no params
-        if (params.length == 1) {
+        if (params.length < 2) {
             gameClient.getHabbo().getHabboStats().allowNameChange = !gameClient.getHabbo().getHabboStats().allowNameChange;
             gameClient.sendResponse(new UserObjectComposer(gameClient.getHabbo()));
             return true;
         }
 
+        // check if the habbo exists or is online
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
 
-        // check if the habbo exists or is online
-        if (habbo == null) {
+        if ( habbo == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_changename.user_not_found").replace("%user%", params[1]));
             return true;
         }
