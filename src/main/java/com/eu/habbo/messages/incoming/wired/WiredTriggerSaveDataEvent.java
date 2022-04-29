@@ -10,6 +10,10 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.UpdateFailedComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredSavedComposer;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Optional;
+
 public class WiredTriggerSaveDataEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
@@ -22,16 +26,34 @@ public class WiredTriggerSaveDataEvent extends MessageHandler {
                 InteractionWiredTrigger trigger = room.getRoomSpecialTypes().getTrigger(itemId);
 
                 if (trigger != null) {
-                    WiredSettings settings = InteractionWired.readSettings(this.packet, false);
 
-                    if (trigger.saveData(settings)) {
-                        this.client.sendResponse(new WiredSavedComposer());
+                    Optional<Method> saveMethod = Arrays.stream(trigger.getClass().getMethods()).filter(x -> x.getName().equals("saveData")).findFirst();
 
-                        trigger.needsUpdate(true);
+                    if(saveMethod.isPresent()) {
+                        if (saveMethod.get().getParameterTypes()[0] == WiredSettings.class) {
+                            WiredSettings settings = InteractionWired.readSettings(this.packet, false);
 
-                        Emulator.getThreading().run(trigger);
-                    } else {
-                        this.client.sendResponse(new UpdateFailedComposer("There was an error while saving that trigger"));
+                            if (trigger.saveData(settings)) {
+                                this.client.sendResponse(new WiredSavedComposer());
+
+                                trigger.needsUpdate(true);
+
+                                Emulator.getThreading().run(trigger);
+                            } else {
+                                this.client.sendResponse(new UpdateFailedComposer("There was an error while saving that trigger"));
+                            }
+                        } else {
+                            if ((boolean) saveMethod.get().invoke(trigger, this.packet)) {
+                                this.client.sendResponse(new WiredSavedComposer());
+                                trigger.needsUpdate(true);
+                                Emulator.getThreading().run(trigger);
+                            } else {
+                                this.client.sendResponse(new UpdateFailedComposer("There was an error while saving that trigger"));
+                            }
+                        }
+                    }
+                    else {
+                        this.client.sendResponse(new UpdateFailedComposer("Save method was not found"));
                     }
                 }
             }

@@ -10,6 +10,10 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.UpdateFailedComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredSavedComposer;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Optional;
+
 public class WiredEffectSaveDataEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
@@ -25,12 +29,29 @@ public class WiredEffectSaveDataEvent extends MessageHandler {
                     if (effect == null)
                         throw new WiredSaveException(String.format("Wired effect with item id %s not found in room", itemId));
 
-                    WiredSettings settings = InteractionWired.readSettings(this.packet, true);
-                    if (effect.saveData(settings, this.client)) {
-                        this.client.sendResponse(new WiredSavedComposer());
-                        effect.needsUpdate(true);
-                        Emulator.getThreading().run(effect);
+                    Optional<Method> saveMethod = Arrays.stream(effect.getClass().getMethods()).filter(x -> x.getName().equals("saveData")).findFirst();
+
+                    if(saveMethod.isPresent()) {
+                        if(saveMethod.get().getParameterTypes()[0] == WiredSettings.class) {
+                            WiredSettings settings = InteractionWired.readSettings(this.packet, true);
+                            if (effect.saveData(settings, this.client)) {
+                                this.client.sendResponse(new WiredSavedComposer());
+                                effect.needsUpdate(true);
+                                Emulator.getThreading().run(effect);
+                            }
+                        }
+                        else {
+                            if ((boolean) saveMethod.get().invoke(effect, this.packet, this.client)) {
+                                this.client.sendResponse(new WiredSavedComposer());
+                                effect.needsUpdate(true);
+                                Emulator.getThreading().run(effect);
+                            }
+                        }
+                    } else {
+                        this.client.sendResponse(new UpdateFailedComposer("Save method was not found"));
                     }
+
+
                 }
                 catch (WiredSaveException e) {
                     this.client.sendResponse(new UpdateFailedComposer(e.getMessage()));
