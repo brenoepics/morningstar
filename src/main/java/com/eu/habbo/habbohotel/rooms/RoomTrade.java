@@ -328,6 +328,8 @@ public class RoomTrade {
     }
 
     public static int getCreditsByItem(HabboItem item) {
+        if (!Emulator.getConfig().getBoolean("redeem.currency.trade")) return 0;
+
         if (!item.getBaseItem().getName().startsWith("CF_") && !item.getBaseItem().getName().startsWith("CFC_")) return 0;
 
         try {
