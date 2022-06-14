@@ -94,7 +94,3 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('rcon.alert.user.change_us
 
 -- Custom Stacking Setting
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('custom.stacking.enabled', '0');
-
--- Trade Currency Setting
-INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('redeem.currency.trade', '1');
-
