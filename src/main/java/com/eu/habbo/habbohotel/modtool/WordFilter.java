@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.modtool;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Message;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.friends.NewConsoleMessageComposer;
 import com.eu.habbo.plugin.events.users.UserTriggerWordFilterEvent;
@@ -87,6 +88,10 @@ public class WordFilter {
                 .replace("ß", "b").trim()).replaceAll(" ");
     }
 
+    public boolean autoReportCheck(Habbo user, String message)
+    {
+        return autoReportCheck(new RoomChatMessage(message, user, RoomChatMessageBubbles.NORMAL));
+    }
     public boolean autoReportCheck(RoomChatMessage roomChatMessage) {
         String message = this.normalise(roomChatMessage.getMessage()).toLowerCase();
 
