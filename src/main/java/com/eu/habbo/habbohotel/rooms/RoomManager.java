@@ -329,8 +329,7 @@ public class RoomManager {
 
 
     public Room createRoom(int ownerId, String ownerName, String name, String description, String modelName, int usersMax, int categoryId, int tradeType) {
-        Room room = null;
-
+       Room room = null;
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rooms (owner_id, owner_name, name, description, model, users_max, category, trade_mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, ownerId);
             statement.setString(2, ownerName);
@@ -354,6 +353,10 @@ public class RoomManager {
 
 
     public Room createRoomForHabbo(Habbo habbo, String name, String description, String modelName, int usersMax, int categoryId, int tradeType) {
+
+        if (Emulator.getConfig().getBoolean("hotel.wordfilter.enabled"))
+            if (Emulator.getGameEnvironment().getWordFilter().autoReportCheck(habbo,name) || Emulator.getGameEnvironment().getWordFilter().autoReportCheck(habbo,description))
+                return null;
         Room room = this.createRoom(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), name, description, modelName, usersMax, categoryId, tradeType);
 
         Emulator.getPluginManager().fireEvent(new NavigatorRoomCreatedEvent(habbo, room));
