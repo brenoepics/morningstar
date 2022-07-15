@@ -353,10 +353,10 @@ public class RoomManager {
 
 
     public Room createRoomForHabbo(Habbo habbo, String name, String description, String modelName, int usersMax, int categoryId, int tradeType) {
-
-        if (Emulator.getConfig().getBoolean("hotel.wordfilter.enabled"))
+        if (Emulator.getConfig().getBoolean("hotel.wordfilter.enabled") && Emulator.getConfig().getBoolean("hotel.wordfilter.rooms"))
             if (Emulator.getGameEnvironment().getWordFilter().autoReportCheck(habbo,name) || Emulator.getGameEnvironment().getWordFilter().autoReportCheck(habbo,description))
                 return null;
+
         Room room = this.createRoom(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), name, description, modelName, usersMax, categoryId, tradeType);
 
         Emulator.getPluginManager().fireEvent(new NavigatorRoomCreatedEvent(habbo, room));
