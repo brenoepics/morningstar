@@ -3,7 +3,7 @@ FROM maven:latest AS builder
 # Copy the Emulator sources to the container
 COPY . .
 # Package it
-RUN mvn package && mv /target/Habbo*-with-dependencies.jar /target/Habbo.jar
+RUN mvn package && mv /target/Morningstar*-with-dependencies.jar /target/Habbo.jar
 
 # Use Java 8 for running
 FROM java:8 AS runner
