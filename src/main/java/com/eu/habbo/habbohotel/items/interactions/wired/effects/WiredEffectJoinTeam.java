@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
+import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
@@ -52,6 +53,12 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
 
             if(habbo.getHabboInfo().getGamePlayer() == null) {
                 game.addHabbo(habbo, this.teamColor);
+            }
+
+            if (room.getRoomSpecialTypes() != null) {
+                for (InteractionGameGate gate : room.getRoomSpecialTypes().getFreezeGates().values()) {
+                    gate.updateState(game, 5);
+                }
             }
 
             return true;
