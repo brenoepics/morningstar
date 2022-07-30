@@ -39,19 +39,19 @@ public class PostItSaveDataEvent extends MessageHandler {
         if (!(item instanceof InteractionPostIt))
             return;
 
-        if (!color.equalsIgnoreCase(PostItColor.YELLOW.hexColor) && !room.hasRights(this.client.getHabbo())) {
+        if (!color.equalsIgnoreCase(PostItColor.YELLOW.hexColor) && !room.hasRights(this.client.getHabbo()) && item.getUserId() != this.client.getHabbo().getHabboInfo().getId()) {
             if (!text.startsWith(item.getExtradata().replace(item.getExtradata().split(" ")[0], ""))) {
                 return;
             }
-        } else {
-            if (!room.hasRights(this.client.getHabbo()))
-                return;
+        } else if (!room.hasRights(this.client.getHabbo()) && item.getUserId() != this.client.getHabbo().getHabboInfo().getId()) {
+            return;
         }
+
+
 
         if (color.isEmpty())
             color = PostItColor.YELLOW.hexColor;
 
-        item.setUserId(room.getOwnerId());
         item.setExtradata(color + " " + text);
         item.needsUpdate(true);
         room.updateItem(item);
