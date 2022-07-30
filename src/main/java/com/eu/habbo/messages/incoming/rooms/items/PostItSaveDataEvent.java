@@ -47,8 +47,6 @@ public class PostItSaveDataEvent extends MessageHandler {
             return;
         }
 
-
-
         if (color.isEmpty())
             color = PostItColor.YELLOW.hexColor;
 
