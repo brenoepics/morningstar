@@ -59,10 +59,30 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 for (int i = 0; i < count; i++) {
                     String tag = this.packet.readString();
 
-                    if (tag.length() > 15) {
+                    if (tag.length() > 22) {
                         this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.TAGS_TOO_LONG, ""));
                         return;
                     }
+
+                    if (tag.startsWith(" ")) {
+                        int start = 0;
+
+                        for(int c = 0; c < tag.length(); c++) {
+                            if(tag.charAt(c) == ' ')
+                                continue;
+                            else {
+                                start = c;
+                                break;
+                            }
+                        }
+
+                        if (start > 0)
+                            tag = tag.substring(start);
+                    }
+
+                    if (tags.toString().contains(tag) || tag.contains(",") || tag.contains(";") || tag.contains("#") || tag.isEmpty())
+                        continue;
+
                     tags.append(tag).append(";");
                 }
 
