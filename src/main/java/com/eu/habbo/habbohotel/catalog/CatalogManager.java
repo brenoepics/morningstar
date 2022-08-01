@@ -201,6 +201,8 @@ public class CatalogManager {
     public final Item ecotronItem;
     public final THashMap<Integer, CatalogLimitedConfiguration> limitedNumbers;
     private final List<Voucher> vouchers;
+    private int coloursFound = 0;
+    private Pet pet = null;
 
     public CatalogManager() {
         long millis = System.currentTimeMillis();
@@ -952,8 +954,7 @@ public class CatalogManager {
                                     habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                                     return;
                                 }
-
-                                Pet pet = null;
+                                
                                 try {
                                     pet = Emulator.getGameEnvironment().getPetManager().createPet(baseItem, data[0], data[1], data[2], habbo.getClient());
                                 } catch (Exception e) {
@@ -969,6 +970,111 @@ public class CatalogManager {
                                 habbo.getClient().getHabbo().getInventory().getPetsComponent().addPet(pet);
                                 habbo.getClient().sendResponse(new AddPetComposer(pet));
                                 habbo.getClient().sendResponse(new PetBoughtNotificationComposer(pet, false));
+
+                                // Table 'pet_actions' column 'pet_type' (30 Baby Pig)
+                                if (pet.getPetData().getType() == 30)
+                                {
+                                    coloursFound = 0;
+
+                                    TIntObjectHashMap<Pet> petsInInventory = new TIntObjectHashMap<>();
+                                    petsInInventory.putAll(habbo.getClient().getHabbo().getInventory().getPetsComponent().getPets());
+                                    petsInInventory.forEachValue(object -> {
+                                        if (object.getPetData().getType() == 30 && pet.getRace() == object.getRace())
+                                        {
+                                            coloursFound++;
+                                        }
+                                        return true;
+                                    });
+
+                                    if (coloursFound == 1) // 1 because if they were 2 there is already another of the same color
+                                    {
+                                        AchievementManager.progressAchievement(habbo.getClient().getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PigBreeder"));   
+                                    }
+                                }
+
+                                // Table 'pet_actions' column 'pet_type' (29 Baby Dog)
+                                if (pet.getPetData().getType() == 29)
+                                {
+                                    coloursFound = 0;
+
+                                    TIntObjectHashMap<Pet> petsInInventory = new TIntObjectHashMap<>();
+                                    petsInInventory.putAll(habbo.getClient().getHabbo().getInventory().getPetsComponent().getPets());
+                                    petsInInventory.forEachValue(object -> {
+                                        if (object.getPetData().getType() == 29 && pet.getRace() == object.getRace())
+                                        {
+                                            coloursFound++;
+                                        }
+                                        return true;
+                                    });
+
+                                    if (coloursFound == 1) // 1 because if they were 2 there is already another of the same color
+                                    {
+                                        AchievementManager.progressAchievement(habbo.getClient().getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("DogBreeder"));   
+                                    }
+                                }
+
+                                // Table 'pet_actions' column 'pet_type' (28 Baby Cat)
+                                if (pet.getPetData().getType() == 28)
+                                {
+                                    coloursFound = 0;
+
+                                    TIntObjectHashMap<Pet> petsInInventory = new TIntObjectHashMap<>();
+                                    petsInInventory.putAll(habbo.getClient().getHabbo().getInventory().getPetsComponent().getPets());
+                                    petsInInventory.forEachValue(object -> {
+                                        if (object.getPetData().getType() == 28 && pet.getRace() == object.getRace())
+                                        {
+                                            coloursFound++;
+                                        }
+                                        return true;
+                                    });
+
+                                    if (coloursFound == 1) // 1 because if they were 2 there is already another of the same color
+                                    {
+                                        AchievementManager.progressAchievement(habbo.getClient().getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("CatBreeder"));   
+                                    }
+                                }
+
+                                // Table 'pet_actions' column 'pet_type' (25 Baby Terrier)
+                                if (pet.getPetData().getType() == 25)
+                                {
+                                    coloursFound = 0;
+
+                                    TIntObjectHashMap<Pet> petsInInventory = new TIntObjectHashMap<>();
+                                    petsInInventory.putAll(habbo.getClient().getHabbo().getInventory().getPetsComponent().getPets());
+                                    petsInInventory.forEachValue(object -> {
+                                        if (object.getPetData().getType() == 25 && pet.getRace() == object.getRace())
+                                        {
+                                            coloursFound++;
+                                        }
+                                        return true;
+                                    });
+
+                                    if (coloursFound == 1) // 1 because if they were 2 there is already another of the same color
+                                    {
+                                        AchievementManager.progressAchievement(habbo.getClient().getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("TerrierBreeder"));   
+                                    }
+                                }
+
+                                // Table 'pet_actions' column 'pet_type' (24 Baby Bear)
+                                if (pet.getPetData().getType() == 24)
+                                {
+                                    coloursFound = 0;
+
+                                    TIntObjectHashMap<Pet> petsInInventory = new TIntObjectHashMap<>();
+                                    petsInInventory.putAll(habbo.getClient().getHabbo().getInventory().getPetsComponent().getPets());
+                                    petsInInventory.forEachValue(object -> {
+                                        if (object.getPetData().getType() == 24 && pet.getRace() == object.getRace())
+                                        {
+                                            coloursFound++;
+                                        }
+                                        return true;
+                                    });
+
+                                    if (coloursFound == 1) // 1 because if they were 2 there is already another of the same color
+                                    {
+                                        AchievementManager.progressAchievement(habbo.getClient().getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BearBreeder"));   
+                                    }
+                                }
 
                                 AchievementManager.progressAchievement(habbo.getClient().getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLover"));
 
