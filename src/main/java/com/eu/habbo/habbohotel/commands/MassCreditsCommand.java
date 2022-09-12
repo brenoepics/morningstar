@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.users.UserCreditsComposer;
 
 import java.util.Map;
 
@@ -30,7 +29,6 @@ public class MassCreditsCommand extends Command {
                     Habbo habbo = set.getValue();
 
                     habbo.giveCredits(amount);
-                    habbo.getClient().sendResponse(new UserCreditsComposer(habbo));
 
                     if (habbo.getHabboInfo().getCurrentRoom() != null)
                         habbo.whisper(Emulator.getTexts().getValue("commands.generic.cmd_credits.received").replace("%amount%", amount + ""), RoomChatMessageBubbles.ALERT);
