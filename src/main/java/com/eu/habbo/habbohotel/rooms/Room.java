@@ -3423,7 +3423,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return lockedTiles;
     }
 
-    @Deprecated
     public THashSet<HabboItem> getItemsAt(int x, int y) {
         RoomTile tile = this.getLayout().getTile((short) x, (short) y);
 
@@ -3583,7 +3582,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return this.layout.getHeightAtSquare(x, y);
     }
 
-    @Deprecated
     public HabboItem getLowestChair(int x, int y) {
         if (this.layout == null) return null;
 
@@ -3900,14 +3898,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         return RoomRightLevels.NONE;
-    }
-
-    /**
-     * @deprecated Deprecated since 2.5.0. Use {@link #getGuildRightLevel(Habbo)} instead.
-     */
-    @Deprecated
-    public int guildRightLevel(Habbo habbo) {
-        return this.getGuildRightLevel(habbo).level;
     }
 
     public boolean isOwner(Habbo habbo) {
