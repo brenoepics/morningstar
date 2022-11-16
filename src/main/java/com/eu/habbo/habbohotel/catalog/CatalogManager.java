@@ -548,13 +548,11 @@ public class CatalogManager {
         voucher.addHistoryEntry(habbo.getHabboInfo().getId());
 
         if (voucher.points > 0) {
-            client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.pointsType, voucher.points);
-            client.sendResponse(new UserPointsComposer(client.getHabbo().getHabboInfo().getCurrencyAmount(voucher.pointsType), voucher.points, voucher.pointsType));
+            client.getHabbo().givePoints(voucher.pointsType, voucher.points);
         }
 
         if (voucher.credits > 0) {
-            client.getHabbo().getHabboInfo().addCredits(voucher.credits);
-            client.sendResponse(new UserCreditsComposer(client.getHabbo()));
+            client.getHabbo().giveCredits(voucher.credits);
         }
 
         if (voucher.catalogItemId > 0) {
@@ -1072,15 +1070,13 @@ public class CatalogManager {
 
                 if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                     if (purchasedEvent.totalCredits > 0) {
-                        habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.totalCredits);
-                        habbo.getClient().sendResponse(new UserCreditsComposer(habbo.getClient().getHabbo()));
+                        habbo.getClient().getHabbo().giveCredits(-purchasedEvent.totalCredits);
                     }
                 }
 
                 if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
                     if (purchasedEvent.totalPoints > 0) {
-                        habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.totalPoints);
-                        habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.totalPoints, item.getPointsType()));
+                        habbo.getClient().getHabbo().givePoints(item.getPointsType(), -purchasedEvent.totalPoints);
                     }
                 }
 

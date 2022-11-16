@@ -58,22 +58,16 @@ public class CatalogBuyClubDiscountEvent extends MessageHandler {
                             return;
 
                         if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS))
-                            this.client.getHabbo().getHabboInfo().addCredits(-totalCredits);
+                            this.client.getHabbo().giveCredits(-totalCredits);
 
                         if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
-                            this.client.getHabbo().getHabboInfo().addCurrencyAmount(deal.getPointsType(), -totalDuckets);
+                            this.client.getHabbo().givePoints(deal.getPointsType(), -totalDuckets);
 
 
                         if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {
                             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
                             throw new Exception("Unable to create or extend subscription");
                         }
-
-                        if (totalCredits > 0)
-                            this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
-
-                        if (totalDuckets > 0)
-                            this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
 
                         this.client.sendResponse(new PurchaseOKComposer(null));
                         this.client.sendResponse(new InventoryRefreshComposer());

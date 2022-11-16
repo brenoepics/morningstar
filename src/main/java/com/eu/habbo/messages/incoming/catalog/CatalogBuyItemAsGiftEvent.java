@@ -358,11 +358,10 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                     }
                     if (totalPoints > 0) {
                         if (item.getPointsType() == 0 && !this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_PIXELS)) {
-                            this.client.getHabbo().getHabboInfo().addPixels(-totalPoints);
+                            this.client.getHabbo().givePixels(-totalPoints);
                         } else if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
-                            this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalPoints);
+                            this.client.getHabbo().givePoints(item.getPointsType(), -totalPoints);
                         }
-                        this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -totalPoints, item.getPointsType()));
                     }
 
                     this.client.sendResponse(new PurchaseOKComposer(item));

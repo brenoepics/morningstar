@@ -375,15 +375,13 @@ public class SubscriptionHabboClub extends Subscription {
             case "coins":
             case "credit":
             case "coin":
-                habbo.getClient().getHabbo().getHabboInfo().addCredits(amount);
-                habbo.getClient().sendResponse(new UserCreditsComposer(habbo.getClient().getHabbo()));
+                habbo.getClient().getHabbo().giveCredits(amount);
                 break;
 
             case "diamonds":
             case "diamond":
                 pointCurrency = 5;
-                habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
-                habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+                habbo.getClient().getHabbo().givePoints(pointCurrency, amount);
                 break;
 
             case "duckets":
@@ -391,8 +389,7 @@ public class SubscriptionHabboClub extends Subscription {
             case "pixels":
             case "pixel":
                 pointCurrency = 0;
-                habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
-                habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+                habbo.getClient().getHabbo().givePoints(pointCurrency, amount);
                 break;
 
             default:
@@ -405,8 +402,7 @@ public class SubscriptionHabboClub extends Subscription {
                 }
 
                 if (pointCurrency >= 0) {
-                    habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
-                    habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+                    habbo.getClient().getHabbo().givePoints(pointCurrency, amount);
                 }
                 break;
         }
