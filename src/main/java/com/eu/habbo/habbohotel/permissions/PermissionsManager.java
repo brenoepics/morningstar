@@ -40,25 +40,23 @@ public class PermissionsManager {
     private void loadPermissions() {
         this.badges.clear();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM permissions ORDER BY id ASC")) {
-            try (ResultSet set = statement.executeQuery()) {
-                while (set.next()) {
-                    Rank rank = null;
-                    if (!this.ranks.containsKey(set.getInt("id"))) {
-                        rank = new Rank(set);
-                        this.ranks.put(set.getInt("id"), rank);
-                    } else {
-                        rank = this.ranks.get(set.getInt("id"));
-                        rank.load(set);
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permissions ORDER BY id ASC")) {
+            while (set.next()) {
+                Rank rank = null;
+                if (!this.ranks.containsKey(set.getInt("id"))) {
+                    rank = new Rank(set);
+                    this.ranks.put(set.getInt("id"), rank);
+                } else {
+                    rank = this.ranks.get(set.getInt("id"));
+                    rank.load(set);
+                }
+
+                if (rank != null && !rank.getBadge().isEmpty()) {
+                    if (!this.badges.containsKey(rank.getBadge())) {
+                        this.badges.put(rank.getBadge(), new ArrayList<Rank>());
                     }
 
-                    if (rank != null && !rank.getBadge().isEmpty()) {
-                        if (!this.badges.containsKey(rank.getBadge())) {
-                            this.badges.put(rank.getBadge(), new ArrayList<Rank>());
-                        }
-
-                        this.badges.get(rank.getBadge()).add(rank);
-                    }
+                    this.badges.get(rank.getBadge()).add(rank);
                 }
             }
         } catch (SQLException e) {

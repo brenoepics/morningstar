@@ -93,7 +93,7 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
             return false;
 
         if (this.amount > 0) {
-            habbo.getHabboInfo().addCurrencyAmount(Emulator.getConfig().getInt("hotelview.promotional.points.type"), this.amount);
+            habbo.givePoints(Emulator.getConfig().getInt("hotelview.promotional.points.type"), this.amount);
             habbo.getClient().sendResponse(new BonusRareComposer(habbo));
         }
 

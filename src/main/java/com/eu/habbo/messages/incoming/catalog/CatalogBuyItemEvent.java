@@ -106,12 +106,10 @@ public class CatalogBuyItemEvent extends MessageHandler {
                     }
                         ((RoomBundleLayout) page).buyRoom(this.client.getHabbo());
                         if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) { //if the player has this perm disabled
-                            this.client.getHabbo().getHabboInfo().addCredits(-roomBundleItem.getCredits()); // takes their credits away
-                            this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo())); // Sends the updated currency composer window
+                            this.client.getHabbo().giveCredits(-roomBundleItem.getCredits()); // takes their credits away
                         }
                         if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) { //if the player has this perm disabled
-                            this.client.getHabbo().getHabboInfo().addCurrencyAmount(roomBundleItem.getPointsType(), -roomBundleItem.getPoints()); // takes their points away
-                            this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo())); // Sends the updated currency composer window
+                            this.client.getHabbo().givePoints(roomBundleItem.getPointsType(), -roomBundleItem.getPoints()); // takes their points away
                         }
                         this.client.sendResponse(new PurchaseOKComposer()); // Sends the composer to close the window.
 
@@ -176,10 +174,10 @@ public class CatalogBuyItemEvent extends MessageHandler {
                         return;
 
                     if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS))
-                        this.client.getHabbo().getHabboInfo().addCredits(-totalCredits);
+                        this.client.getHabbo().giveCredits(-totalCredits);
 
                     if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
-                        this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalDuckets);
+                        this.client.getHabbo().givePoints(item.getPointsType(), -totalDuckets);
 
 
                     if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {
@@ -194,12 +192,6 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
                     this.client.sendResponse(new UserPermissionsComposer(this.client.getHabbo()));
                     this.client.sendResponse(new UserClubComposer(this.client.getHabbo()));*/
-
-                    if (totalCredits > 0)
-                        this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
-
-                    if (totalDuckets > 0)
-                        this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
 
                     this.client.sendResponse(new PurchaseOKComposer(null));
                     this.client.sendResponse(new InventoryRefreshComposer());
