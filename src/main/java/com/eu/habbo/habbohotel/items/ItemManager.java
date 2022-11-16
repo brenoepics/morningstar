@@ -183,6 +183,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("effect_vendingmachine_no_sides", InteractionEffectVendingMachineNoSides.class));
         this.interactionsList.add(new ItemInteraction("crackable_monster", InteractionMonsterCrackable.class));
         this.interactionsList.add(new ItemInteraction("snowboard_slope", InteractionSnowboardSlope.class));
+        this.interactionsList.add(new ItemInteraction("skateboard", InteractionSkateboard.class));
         this.interactionsList.add(new ItemInteraction("pressureplate_group", InteractionGroupPressurePlate.class));
         this.interactionsList.add(new ItemInteraction("effect_tile_group", InteractionEffectTile.class));
         this.interactionsList.add(new ItemInteraction("crackable_subscription_box", InteractionRedeemableSubscriptionBox.class));
