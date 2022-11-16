@@ -279,12 +279,11 @@ public class MarketPlace {
                                         client.getHabbo().getInventory().getItemsComponent().addItem(item);
 
                                         if (MARKETPLACE_CURRENCY == 0) {
-                                            client.getHabbo().getHabboInfo().addCredits(-event.price);
+                                            client.getHabbo().giveCredits(-event.price);
                                         } else {
                                             client.getHabbo().givePoints(MARKETPLACE_CURRENCY, -event.price);
                                         }
 
-                                        client.sendResponse(new UserCreditsComposer(client.getHabbo()));
                                         client.sendResponse(new AddHabboItemComposer(item));
                                         client.sendResponse(new InventoryRefreshComposer());
                                         client.sendResponse(new MarketplaceBuyErrorComposer(MarketplaceBuyErrorComposer.REFRESH, 0, offerId, price));
@@ -381,11 +380,10 @@ public class MarketPlace {
         offers.clear();
 
         if (MARKETPLACE_CURRENCY == 0) {
-            client.getHabbo().getHabboInfo().addCredits(credits);
+            client.getHabbo().giveCredits(credits);
         } else {
             client.getHabbo().givePoints(MARKETPLACE_CURRENCY, credits);
         }
-        client.sendResponse(new UserCreditsComposer(client.getHabbo()));
     }
 
     private static void removeUser(MarketPlaceOffer offer) {
