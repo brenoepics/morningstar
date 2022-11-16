@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HabboStats implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HabboStats.class);
-
     public final TIntArrayList secretRecipes;
     public final HabboNavigatorWindowSettings navigatorWindowSettings;
     public final THashMap<String, Object> cache;
@@ -100,6 +99,7 @@ public class HabboStats implements Runnable {
     public int hcGiftsClaimed;
     public int hcMessageLastModified = Emulator.getIntUnixTimestamp();
     public THashSet<Subscription> subscriptions;
+    private int oldEffectId = 0;
 
     private HabboStats(ResultSet set, HabboInfo habboInfo) throws SQLException {
         this.cache = new THashMap<>(0);
@@ -369,7 +369,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(37, this.lastHCPayday);
                 statement.setInt(38, this.hcGiftsClaimed);
                 statement.setInt(39, this.habboInfo.getId());
-                
+
                 statement.executeUpdate();
             }
 
@@ -802,5 +802,13 @@ public class HabboStats implements Runnable {
 
     public void addHabboOfferPurchase(HabboOfferPurchase offerPurchase) {
         this.offerCache.put(offerPurchase.getOfferId(), offerPurchase);
+    }
+
+    public int getOldEffectId() {
+        return this.oldEffectId;
+    }
+
+    public void setOldEffectId(int effect) {
+        this.oldEffectId = effect;
     }
 }

@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.Pet;
@@ -48,6 +49,7 @@ public class InteractionWater extends InteractionDefault {
         for (Habbo habbo : room.getHabbosOnItem(this)) {
             try {
                 this.onWalkOff(habbo.getRoomUnit(), room, empty);
+
             } catch (Exception e) {
 
             }
@@ -70,6 +72,8 @@ public class InteractionWater extends InteractionDefault {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().setOldEffectId(room.getHabbo(roomUnit).getClient().getHabbo().getRoomUnit().getEffectId());
+
         super.onWalkOn(roomUnit, room, objects);
 
         Pet pet = room.getPet(roomUnit);
@@ -85,6 +89,12 @@ public class InteractionWater extends InteractionDefault {
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
+
+        if (Emulator.getGameEnvironment().getItemManager().isFurniEffect(room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId())) {
+            room.giveEffect(roomUnit, 0, -1);
+        } else {
+            room.giveEffect(roomUnit, room.getHabbo(roomUnit).getClient().getHabbo().getHabboStats().getOldEffectId(), -1);
+        }
 
         Pet pet = room.getPet(roomUnit);
 
