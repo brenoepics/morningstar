@@ -4124,23 +4124,15 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void giveEffect(RoomUnit roomUnit, int effectId, int duration) {
-       if(roomUnit == null) return;
+        if (duration == -1 || duration == Integer.MAX_VALUE) {
+            duration = Integer.MAX_VALUE;
+        } else {
+            duration += Emulator.getIntUnixTimestamp();
+        }
 
-        Habbo habbo = roomUnit.getRoom().getHabbo(roomUnit);
-        
-        if(habbo == null) return;
-
-        if (!habbo.getHabboInfo().isInGame()) {
-            if (duration == -1 || duration == Integer.MAX_VALUE) {
-                duration = Integer.MAX_VALUE;
-            } else {
-                duration += Emulator.getIntUnixTimestamp();
-            }
-
-            if (this.allowEffects) {
-                roomUnit.setEffectId(effectId, duration);
-                this.sendComposer(new RoomUserEffectComposer(roomUnit).compose());
-            }
+        if (this.allowEffects && roomUnit != null) {
+            roomUnit.setEffectId(effectId, duration);
+            this.sendComposer(new RoomUserEffectComposer(roomUnit).compose());
         }
     }
 
