@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserEffectComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.habbohotel.achievements.AchievementManager;
 
 public class RoomUnitRidePet implements Runnable {
     private RideablePet pet;
@@ -38,6 +39,13 @@ public class RoomUnitRidePet implements Runnable {
             habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
             habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserEffectComposer(habbo.getRoomUnit()).compose());
             pet.setTask(PetTasks.RIDE);
+
+            // ACH when the other users riding
+            if (pet.getUserId() != habbo.getHabboInfo().getId())
+            {
+                AchievementManager.progressAchievement(pet.getUserId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("HorseRent"));
+            }
+
         } else {
             pet.getRoomUnit().setWalkTimeOut(3 + Emulator.getIntUnixTimestamp());
             pet.getRoomUnit().stopWalking();
