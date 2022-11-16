@@ -526,21 +526,30 @@ public class Pet implements ISerialize, Runnable {
     }
 
 
-    protected void levelUp() {
-            if (this.level >= PetManager.experiences.length + 1)
-                return;
+    protected void levelUp()
+    {
+        if (this.level >= PetManager.experiences.length + 1) return;
 
-            if (this.experience > PetManager.experiences[this.level - 1]) {
-                this.experience = PetManager.experiences[this.level - 1];
-            }
-            this.level++;
-            this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
-            this.addHappyness(100);
-            this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
-            this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
-            AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
-            this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
+        if (this.experience > PetManager.experiences[this.level - 1])
+        {
+            this.experience = PetManager.experiences[this.level - 1];
         }
+
+        this.level++;
+        this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
+        this.addHappyness(100);
+        this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
+        this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
+
+        // 14 (Monkey) - 23 (Evil Monkey)
+        if (this.petData.getType() == 14 || this.petData.getType() == 23)
+        {
+            AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BadMonkeyLevelUp"));
+        }
+        
+        AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
+        this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
+    }
 
 
     public void addThirst(int amount) {
