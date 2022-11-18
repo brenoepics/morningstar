@@ -30,6 +30,7 @@ public class CalendarCommand extends Command {
                 int daysBetween = (int) DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
             if(daysBetween >= 0) {
                 gameClient.sendResponse(new AdventCalendarDataComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), daysBetween, gameClient.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()));
+                gameClient.sendResponse(new NuxAlertComposer("openView/calendar"));
             }
         }
 
