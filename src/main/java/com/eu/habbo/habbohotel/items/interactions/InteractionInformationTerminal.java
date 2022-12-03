@@ -34,4 +34,14 @@ public class InteractionInformationTerminal extends InteractionCustomValues {
             habbo.getClient().sendResponse(new NuxAlertComposer(this.values.get("internalLink")));
         }
     }
+
+    @Override
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
+        return this.getBaseItem().allowWalk();
+    }
+
+    @Override
+    public boolean isWalkable() {
+        return this.getBaseItem().allowWalk();
+    }
 }
