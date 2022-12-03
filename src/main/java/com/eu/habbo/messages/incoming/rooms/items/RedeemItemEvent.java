@@ -107,8 +107,7 @@ public class RedeemItemEvent extends MessageHandler {
 
                     switch (furniRedeemEvent.currencyID) {
                         case FurnitureRedeemedEvent.CREDITS:
-                            this.client.getHabbo().getHabboInfo().addCredits(furniRedeemEvent.amount);
-                            this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
+                            this.client.getHabbo().giveCredits(furniRedeemEvent.amount);
                             break;
 
                         case FurnitureRedeemedEvent.DIAMONDS:
@@ -116,8 +115,7 @@ public class RedeemItemEvent extends MessageHandler {
                             break;
 
                         case FurnitureRedeemedEvent.PIXELS:
-                            this.client.getHabbo().getHabboInfo().addPixels(furniRedeemEvent.amount);
-                            this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
+                            this.client.getHabbo().givePixels(furniRedeemEvent.amount);
                             break;
 
                         default:

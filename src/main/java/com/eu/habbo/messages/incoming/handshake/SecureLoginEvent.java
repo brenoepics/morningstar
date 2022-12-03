@@ -33,6 +33,7 @@ import com.eu.habbo.messages.outgoing.unknown.BuildersClubExpiredComposer;
 import com.eu.habbo.messages.outgoing.mysterybox.MysteryBoxKeysComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
+import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
@@ -186,7 +187,13 @@ public class SecureLoginEvent extends MessageHandler {
                     }
                 }
 
-                Emulator.getPluginManager().fireEvent(new UserLoginEvent(habbo, this.client.getHabbo().getHabboInfo().getIpLogin()));
+                UserLoginEvent userLoginEvent = new UserLoginEvent(habbo, this.client.getHabbo().getHabboInfo().getIpLogin());
+                Emulator.getPluginManager().fireEvent(userLoginEvent);
+
+                if(userLoginEvent.isCancelled()) {
+                    Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+                    return;
+                }
 
                 if (Emulator.getConfig().getBoolean("hotel.welcome.alert.enabled")) {
                     final Habbo finalHabbo = habbo;
