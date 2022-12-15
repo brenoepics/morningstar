@@ -26,8 +26,18 @@ public class InteractionInformationTerminal extends InteractionCustomValues {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        super.onWalk(roomUnit, room, objects);
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
+        return this.getBaseItem().allowWalk();
+    }
+
+    @Override
+    public boolean isWalkable() {
+        return this.getBaseItem().allowWalk();
+    }
+
+    @Override
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        super.onWalkOn(roomUnit, room, objects);
 
         Habbo habbo = room.getHabbo(roomUnit);
         if (habbo != null && this.values.containsKey("internalLink")) {
